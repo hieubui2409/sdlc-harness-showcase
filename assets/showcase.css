@@ -53,6 +53,10 @@ section{position:relative;padding:96px 24px;}
 .glow.g1{width:560px;height:560px;background:#1d4ed8;top:-160px;left:-120px}
 .glow.g2{width:520px;height:520px;background:#7c3aed;top:38%;right:-180px}
 .glow.g3{width:480px;height:480px;background:#0f766e;bottom:-160px;left:30%}
+/* frosted-glass panels over the 3D hero — translucent --panel surfaces get a blur
+   so the animated background reads through them as glass. Layout unchanged. */
+.card,.callout,.honest,.stat,.faq details,.cs-more,.wu,.hero-ex{
+  -webkit-backdrop-filter:blur(6px) saturate(115%); backdrop-filter:blur(6px) saturate(115%)}
 
 /* ===================== NAV ===================== */
 nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
