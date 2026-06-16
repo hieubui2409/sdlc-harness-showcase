@@ -630,8 +630,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
     </p>
 
     <div class="cta-row">
-      <a class="btn-cta primary" href="#guides"><span class="en">Browse the guides</span><span class="vi">Xem bộ hướng dẫn</span></a>
-      <a class="btn-cta ghost" href="#quickstart"><span class="en">Quick start →</span><span class="vi">Bắt đầu nhanh →</span></a>
+      <a class="btn-cta primary" href="#qs-install"><span class="en">Install the harness →</span><span class="vi">Cài harness →</span></a>
+      <a class="btn-cta ghost" href="#quickstart"><span class="en">Quick start</span><span class="vi">Bắt đầu nhanh</span></a>
+      <a class="btn-cta ghost" href="#guides"><span class="en">Browse the guides</span><span class="vi">Xem bộ hướng dẫn</span></a>
     </div>
 
     <div class="hero-badges">
@@ -862,13 +863,15 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
     <div style="margin-top:28px">
       <span class="eyebrow" style="display:block">Step 2 · <span class="en">shell</span><span class="vi">shell</span></span>
       <h2 class="sectitle" id="qs-install" style="font-size:1.3rem;margin:2px 0 6px"><span class="en">Install into your repo</span><span class="vi">Cài vào repo của bạn</span></h2>
-      <p class="muted" style="font-size:.9rem"><span class="en">One command copies <code>harness/</code> into the target, merges the hooks into <code>.claude/settings.json</code> <b>additively</b> (your own hooks survive), installs the pre-push gate, writes the reviewer roster, then runs <code>verify_install</code> as the final gate. Idempotent — preview with <code>--dry-run</code>, reverse with <code>--uninstall</code>. <span class="realtag">real output</span></span><span class="vi">Một lệnh copy <code>harness/</code> vào repo đích, gộp hook vào <code>.claude/settings.json</code> theo kiểu <b>cộng thêm</b> (hook của bạn vẫn còn), cài pre-push gate, ghi roster người duyệt, rồi chạy <code>verify_install</code> chốt cuối. Idempotent — xem trước bằng <code>--dry-run</code>, gỡ bằng <code>--uninstall</code>. <span class="realtag">đầu ra thật</span></span></p>
+      <p class="muted" style="font-size:.9rem"><span class="en">From a release bundle, one script verifies the checksum, extracts it, and installs into the target — even with no <code>.git</code> in the bundle:</span><span class="vi">Từ một bản release, một script kiểm checksum, giải nén, và cài vào repo đích — kể cả khi bundle không có <code>.git</code>:</span></p>
+      <div class="cmdline"><code>sh release/install.sh harness-v1.1.0.tar.gz ../my-repo</code></div>
+      <p class="muted" style="font-size:.9rem;margin-top:12px"><span class="en">Or run the installer directly from a clone. It copies <code>harness/</code>, merges hooks into <code>.claude/settings.json</code> <b>additively</b> (your own hooks survive), installs the pre-push gate, writes the reviewer roster, adds a <code>.gitignore</code> block for runtime state, then runs <code>verify_install</code> as the final gate. On a TTY it prompts for reviewers and suggests one from your git email; <code>--non-interactive</code> (alias <code>--yes</code>) is the CI path. Idempotent — preview with <code>--dry-run</code>, reverse with <code>--uninstall</code>. <span class="realtag">real output</span></span><span class="vi">Hoặc chạy thẳng trình cài từ một clone. Nó copy <code>harness/</code>, gộp hook vào <code>.claude/settings.json</code> theo kiểu <b>cộng thêm</b> (hook của bạn vẫn còn), cài pre-push gate, ghi roster người duyệt, thêm khối <code>.gitignore</code> cho trạng thái runtime, rồi chạy <code>verify_install</code> chốt cuối. Trên TTY nó hỏi reviewer và gợi ý từ git email của bạn; <code>--non-interactive</code> (alias <code>--yes</code>) là đường CI. Idempotent — xem trước bằng <code>--dry-run</code>, gỡ bằng <code>--uninstall</code>. <span class="realtag">đầu ra thật</span></span></p>
       <div class="term">
         <div class="tbar"><i></i><i></i><i></i><span class="tcmd">python3 harness/install/install.py --target ../my-repo --reviewers a@x,b@y</span></div>
         <pre>verify_install OK: manifest + hook registration consistent
 </pre>
       </div>
-      <p class="muted" style="font-size:.82rem;margin-top:8px"><span class="en">Full options and per-step detail: <code>docs/deployment-guide.md</code>.</span><span class="vi">Tùy chọn đầy đủ và chi tiết từng bước: <code>docs/deployment-guide.md</code>.</span></p>
+      <p class="muted" style="font-size:.82rem;margin-top:8px"><span class="en">After installing, enable the plugin with <code>/reload-plugins</code> in Claude Code. Full options: <code>docs/deployment-guide.md</code>; every config knob: <code>harness/rules/config-reference.md</code>.</span><span class="vi">Sau khi cài, bật plugin bằng <code>/reload-plugins</code> trong Claude Code. Tùy chọn đầy đủ: <code>docs/deployment-guide.md</code>; mọi núm cấu hình: <code>harness/rules/config-reference.md</code>.</span></p>
     </div>
 
     <!-- Step 3: plan -->
