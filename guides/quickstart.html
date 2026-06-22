@@ -76,6 +76,11 @@
     </div>
     <div class="divider" style="--ac:var(--ok)"></div>
 
+    <div class="callout" style="--ac:var(--gold);margin-bottom:14px">
+      <span class="ci">🧭</span>
+      <div><span class="en"><b>First, pick a posture — it decides the rest of this page.</b> This walkthrough shows <b>team</b> mode (the default): you set a reviewer roster and the gate wants approval before push / pr / ship. On a <b>one-person repo</b>, install with <code>--posture solo</code> instead — Steps 2–4 stay identical, but the human gates (reviewer, approval, protected-branch wall, hard stage block) drop away so you commit / push / ship straight through. The agent stays caged in solo either way. Compared side-by-side on the <a href="../index.html">overview</a>; switch anytime with <code>posture_config.py set solo</code> / <code>set team</code>.</span><span class="vi"><b>Trước hết, chọn một thế — nó quyết định phần còn lại của trang này.</b> Mạch này minh hoạ chế độ <b>team</b> (mặc định): bạn khai roster reviewer và gate đòi duyệt trước push / pr / ship. Với <b>repo một người</b>, hãy cài bằng <code>--posture solo</code> — Bước 2–4 y hệt, nhưng các gate của con người (reviewer, duyệt, tường nhánh-bảo-vệ, stage block cứng) biến mất nên bạn commit / push / ship thẳng. Agent vẫn bị nhốt ở solo dù cách nào. So sánh cạnh nhau ở <a href="../index.html">tổng quan</a>; đổi bất cứ lúc nào bằng <code>posture_config.py set solo</code> / <code>set team</code>.</span></div>
+    </div>
+
     <p class="lead"><span class="en">This page takes you from an empty repo to your <b>first change shipped through the gate</b>. Four steps: one in the shell (install), three in Claude Code (plan, build, ship). The whole walkthrough uses one worked example so the plan slug stays the same throughout. No package manager, no build step — requirements: <b>Linux</b>, <b>Python ≥ 3.9</b>, <b>git</b>, and <b>Claude Code</b>.</span><span class="vi">Trang này đưa bạn từ một repo trống đến <b>thay đổi đầu tiên được ship qua gate</b>. Bốn bước: một bước ở shell (cài), ba bước trong Claude Code (plan, build, ship). Cả mạch dùng chung một ví dụ nên slug của plan giữ nguyên xuyên suốt. Không package manager, không bước build — yêu cầu: <b>Linux</b>, <b>Python ≥ 3.9</b>, <b>git</b>, và <b>Claude Code</b>.</span></p>
 
     <!-- Step 1: install -->
