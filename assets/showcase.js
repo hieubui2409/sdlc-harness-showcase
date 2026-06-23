@@ -68,6 +68,10 @@ document.querySelectorAll('.dial-wrap').forEach(function(wrap){
 var io = new IntersectionObserver(function(entries){
   entries.forEach(function(e){
     if(!e.isIntersecting) return;
+    // A block taller than the viewport (e.g. the full catalog) can never reach the
+    // .16 ratio, so it would stay hidden forever — reveal it the moment it enters.
+    // Short blocks still wait for 16% in view to keep the staggered fade-up.
+    if(e.intersectionRatio < .16 && e.boundingClientRect.height < innerHeight) return;
     e.target.classList.add('in');
     e.target.querySelectorAll('[data-bars] .bf').forEach(function(b){ b.style.width = b.dataset.w + '%'; });
     e.target.querySelectorAll('[data-count]').forEach(function(n){
@@ -77,7 +81,7 @@ var io = new IntersectionObserver(function(entries){
     });
     io.unobserve(e.target);
   });
-},{threshold:.16});
+},{threshold:[0,.16]});
 document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
 /* ---------------- hero background: 3D constellation (Three.js) ----------------
