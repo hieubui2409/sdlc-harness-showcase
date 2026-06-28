@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" class="lang-vi">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="dark" />
-<meta name="theme-color" content="#070b16" />
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzA3MGIxNiIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjciIGZpbGw9IiMzOGJkZjgiLz48L3N2Zz4=" />
+<style>html{background:#070b16}</style>
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+<script>try{if(localStorage.getItem('hs-lang')==='en'){var d=document.documentElement;d.classList.remove('lang-vi');d.classList.add('lang-en');d.lang='en';}}catch(e){}</script>
 <title>SDLC Harness — Interactive Showcase</title>
-<meta name="description" content="An interactive, standalone tour of the SDLC Harness: a file-based discipline for Claude Code — 107 hs:* skills, 48 hooks, 18 agents, a compliance gate, and honest telemetry." />
+<meta name="description" content="An interactive, standalone tour of the SDLC Harness: a file-based discipline for Claude Code — 106 hs:* skills, 48 hooks, 18 agents, a compliance gate, and honest telemetry." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="SDLC Harness" />
+<meta property="og:title" content="SDLC Harness — Interactive Showcase" />
+<meta property="og:description" content="An interactive, standalone tour of the SDLC Harness: a file-based discipline for Claude Code — 106 hs:* skills, 48 hooks, 18 agents, a compliance gate, and honest telemetry." />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="SDLC Harness — Interactive Showcase" />
+<meta name="twitter:description" content="An interactive, standalone tour of the SDLC Harness: a file-based discipline for Claude Code — 106 hs:* skills, 48 hooks, 18 agents, a compliance gate, and honest telemetry." />
 <style>
 /* ============================================================
    SDLC Harness — standalone showcase
@@ -43,8 +53,8 @@ body{
   line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased;
 }
 /* bilingual toggle: hide the other language */
-body.lang-en .vi{display:none !important}
-body.lang-vi .en{display:none !important}
+.lang-en .vi{display:none !important}
+.lang-vi .en{display:none !important}
 
 a{color:var(--spec);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -560,31 +570,99 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   .bar .bf{transition:none !important}
 }
 
+/* ===================== ENGINE CHROME (ported for ssg_engine) =====================
+   The shared engine emits its own header (.app-header > .nav-in with ⌘K search +
+   skip-link), sidebar, crumb, and .page-nav (the prev/overview/next strip). Our
+   legacy chrome targeted .app-header-in + .skill-nav; these rules restyle the
+   engine's markup to our existing dark look. Ported from the aurora-3d showcase
+   assets (vsf-aio-platform-wiki), recolored to our accent vars. */
+
+/* skip-link (a11y: jump to #main-content) */
+.skip-link{position:fixed;left:10px;top:-56px;z-index:200;background:var(--spec);color:#04122a;
+  font-weight:800;font-size:.85rem;padding:9px 15px;border-radius:9px;text-decoration:none;
+  transition:top .16s var(--ease)}
+.skip-link .vi,.skip-link .en{color:inherit}
+.skip-link:focus{top:10px;outline:2px solid #fff;outline-offset:2px}
+
+/* engine header uses .app-header > .nav-in (not .app-header-in). Match the sticky
+   header geometry to our legacy bar and let the search button push the toggle right. */
+.app-header .nav-in{max-width:1280px;gap:14px;padding:12px 24px}
+.app-header .nav-search{margin-left:auto}
+.app-header .langtoggle{flex:none}
+
+/* header search trigger (⌘K) */
+.nav-search{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--stroke-2);
+  border-radius:999px;background:var(--panel);color:var(--txt-faint);cursor:pointer;font-size:.82rem;
+  font-family:inherit;transition:.2s var(--ease)}
+.nav-search:hover{border-color:var(--spec);color:var(--txt)}
+.nav-search svg{width:15px;height:15px;flex:none}
+.nav-search .ns-lab{font-weight:600}
+.nav-search .ns-k{font-size:.72rem;border:1px solid var(--stroke);border-radius:5px;padding:1px 5px;color:var(--txt-faint)}
+@media(max-width:680px){.nav-search .ns-lab,.nav-search .ns-k{display:none}}
+
+/* command palette (site-wide search) */
+.palette{display:none;position:fixed;inset:0;z-index:200;background:rgba(3,6,14,.66);
+  backdrop-filter:blur(3px);padding:14vh 16px 16px;justify-content:center;align-items:flex-start}
+.palette.open{display:flex}
+.pal-box{width:min(640px,100%);background:var(--bg-2);border:1px solid var(--stroke-2);
+  border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column;max-height:70vh}
+.pal-input{width:100%;border:0;border-bottom:1px solid var(--stroke);background:transparent;color:var(--txt);
+  font-size:1.05rem;padding:18px 20px;outline:none;font-family:inherit}
+.pal-list{overflow-y:auto;padding:8px}
+.pal-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;
+  border:0;background:transparent;color:var(--txt);padding:10px 14px;border-radius:10px;cursor:pointer;
+  font-size:.92rem;font-family:inherit}
+.pal-item:hover,.pal-item.on{background:color-mix(in srgb,var(--spec) 14%,transparent)}
+.pal-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pal-k{flex:0 0 auto;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--txt-faint);
+  border:1px solid var(--stroke);border-radius:6px;padding:2px 7px}
+.pal-empty{padding:22px;text-align:center;color:var(--txt-faint)}
+.pal-foot{border-top:1px solid var(--stroke);padding:9px 16px;font-size:.74rem;color:var(--txt-faint)}
+.pal-foot span{border:1px solid var(--stroke);border-radius:5px;padding:0 5px}
+body.pal-open{overflow:hidden}
+
+/* page-nav (engine name for the legacy .skill-nav prev/overview/next strip).
+   Same look as .skill-nav above so guide footers stay identical. */
+.page-nav{display:flex;align-items:stretch;justify-content:space-between;gap:14px;
+  margin-top:40px;margin-bottom:64px;padding-top:26px;border-top:1px solid var(--stroke)}
+.page-nav a,.page-nav span.pv,.page-nav span.nx{flex:1;display:flex;flex-direction:column;gap:3px;
+  border:1px solid var(--stroke);background:var(--panel);border-radius:13px;padding:14px 16px;
+  transition:.25s var(--ease);color:var(--txt-dim)}
+.page-nav span.pv,.page-nav span.nx{border:0;background:transparent}
+.page-nav a:hover{border-color:var(--ac,var(--spec));color:var(--txt);text-decoration:none;transform:translateY(-3px)}
+.page-nav a.nx{text-align:right;align-items:flex-end}
+.page-nav a.hb{flex:0 0 auto;align-items:center;justify-content:center;text-align:center;min-width:130px;font-weight:700}
+.page-nav .k{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.page-nav .v{font-family:monospace;font-weight:700;color:var(--txt)}
+@media(max-width:680px){.page-nav{flex-direction:column}.page-nav a,.page-nav span.pv,.page-nav span.nx{width:100%}.page-nav a.nx{text-align:left;align-items:flex-start}}
+
+/* engine header reveals the side-toggle on guide pages at mobile width */
+@media(max-width:900px){body.view-guide .app-header .side-toggle{display:inline-flex}}
+
 </style>
 </head>
-<body class="lang-en view-home">
-<script>try{if(localStorage.getItem('hs-lang')==='vi')document.body.classList.replace('lang-en','lang-vi');}catch(e){}</script>
-<!-- GENERATED by build.py — edit showcase/partials/ + assets/, never this file -->
+<body class="view-home">
+<!-- GENERATED by docs/showcase/build.py — edit docs/showcase/partials/ + assets/, never docs/public/ -->
 <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
 <canvas id="net"></canvas>
-<header class="app-header">
-  <div class="app-header-in">
-    <button class="side-toggle" data-side-toggle aria-label="Toggle guides menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+<a class="skip-link" href="#main-content"><span class="vi">Bỏ qua tới nội dung</span><span class="en">Skip to content</span></a>
+<nav class="app-header">
+  <div class="nav-in">
+    <button class="side-toggle" type="button" data-side-toggle aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
     <a href="#hub" class="brand"><span class="dot"></span><span>SDLC&nbsp;Harness</span></a>
-    <div class="app-header-right">
-      <a href="#guides" class="btn-guides" data-nav="guides"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h9a3 3 0 0 1 3 3v14H7a2 2 0 0 1-2-2V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9h5M9 13h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="en">Guides</span><span class="vi">Hướng dẫn</span></a>
-      <div class="langtoggle" role="group" aria-label="language">
-        <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
-        <button id="btn-vi" onclick="setLang('vi')">VI</button>
-      </div>
+    <button class="nav-search" type="button" data-search-open aria-label="Tìm kiếm / Search" title="Tìm kiếm (⌘/Ctrl-K)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="ns-lab"><span class="vi">Tìm kiếm</span><span class="en">Search</span></span><span class="ns-k">⌘K</span></button>
+    <div class="langtoggle" role="group" aria-label="language">
+      <button id="btn-en" type="button" onclick="setLang('en')">EN</button>
+      <button id="btn-vi" type="button" onclick="setLang('vi')">VI</button>
     </div>
   </div>
-</header>
+</nav>
 <div class="scrim" data-scrim></div>
 <div class="docs-layout">
-<aside class="docs-side" aria-label="Guides navigation">
-  <a href="#guides" class="side-link side-top" data-nav="guides"><span class="en">All guides</span><span class="vi">Mục lục</span></a>
+<aside class="docs-side" aria-label="Mục lục">
   <div class="side-cat"><span class="en">Start here</span><span class="vi">Bắt đầu</span></div>
+  <a href="#hub" class="side-link active" data-nav="hub"><span class="en">Overview</span><span class="vi">Tổng quan</span></a>
+  <a href="#guides" class="side-link" data-nav="guides"><span class="en">All guides</span><span class="vi">Mục lục</span></a>
   <a href="#quickstart" class="side-link" data-nav="quickstart"><span class="en">Quick start</span><span class="vi">Bắt đầu</span></a>
   <a href="#install" class="side-link" data-nav="install"><span class="en">Install</span><span class="vi">Cài đặt</span></a>
   <a href="#journey" class="side-link" data-nav="journey"><span class="en">Journey</span><span class="vi">Hành trình</span></a>
@@ -616,7 +694,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   <a href="#ref-hooks" class="side-link" data-nav="ref-hooks"><span class="en">All hooks</span><span class="vi">Mọi hook</span></a>
   <a href="#ref-rules" class="side-link" data-nav="ref-rules"><span class="en">Rule layer</span><span class="vi">Lớp luật</span></a>
 </aside>
-<main class="docs-main">
+<main class="docs-main" id="main-content" tabindex="-1">
 <div class="route" data-route="hub">
 <!-- ===================== HERO ===================== -->
 <header class="hero">
@@ -634,8 +712,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
       <span class="en"><b>Observe</b></span><span class="vi"><b>Quan sát</b></span>
     </div>
     <p class="lead">
-      <span class="en">Not prose reminders — a coordinated <code>.claude</code>-style rig that enforces the workflow at runtime: 107 <code>hs:*</code> skills, 48 hooks in three tiers, 123 scripts, and a compliance gate that <b>blocks</b> push / pr / ship when the acceptance artifact is missing. Every gate, approval, and decision is traced with an <code>actor</code>.</span>
-      <span class="vi">Không phải lời nhắc — mà cả một bộ kiểu <code>.claude</code> phối hợp, ép quy trình ngay lúc chạy: 107 skill <code>hs:*</code>, 48 hook ba hạng, 123 script, và một gate compliance <b>chặn</b> push / pr / ship khi thiếu artifact nghiệm thu. Mọi gate, duyệt và quyết định đều được trace kèm <code>actor</code>.</span>
+      <span class="en">Not prose reminders — a coordinated <code>.claude</code>-style rig that enforces the workflow at runtime: 106 <code>hs:*</code> skills, 48 hooks in three tiers, 123 scripts, and a compliance gate that <b>blocks</b> push / pr / ship when the acceptance artifact is missing. Every gate, approval, and decision is traced with an <code>actor</code>.</span>
+      <span class="vi">Không phải lời nhắc — mà cả một bộ kiểu <code>.claude</code> phối hợp, ép quy trình ngay lúc chạy: 106 skill <code>hs:*</code>, 48 hook ba hạng, 123 script, và một gate compliance <b>chặn</b> push / pr / ship khi thiếu artifact nghiệm thu. Mọi gate, duyệt và quyết định đều được trace kèm <code>actor</code>.</span>
     </p>
 
     <div class="cta-row">
@@ -752,7 +830,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
     </div>
 
     <div class="stats">
-      <div class="stat"><div class="n" data-count="99">99</div><div class="l"><span class="en">hs:* skills in the suite</span><span class="vi">skill hs:* trong bộ</span></div></div>
+      <div class="stat"><div class="n" data-count="106">106</div><div class="l"><span class="en">hs:* skills in the suite</span><span class="vi">skill hs:* trong bộ</span></div></div>
       <div class="stat"><div class="n" data-count="20">20</div><div class="l"><span class="en">hooks · 3 tiers</span><span class="vi">hook · 3 hạng</span></div></div>
       <div class="stat"><div class="n" data-count="2508">2508</div><div class="l"><span class="en">unit + invariant tests pass</span><span class="vi">test unit + invariant pass</span></div></div>
       <div class="stat"><div class="n" data-count="0">0</div><div class="l"><span class="en">network calls in the gate path</span><span class="vi">lần gọi mạng trong đường gate</span></div></div>
@@ -768,7 +846,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
     <p class="lead"><span class="en">The product is the <code>harness/</code> tree: skills, hooks, scripts, rules, data, schemas, install, tests. Delete the directory and the harness is gone — a CI invariant forbids the string <code>.claude/skills/</code> inside <code>harness/</code>.</span><span class="vi">Sản phẩm là cây <code>harness/</code>: skills, hooks, scripts, rules, data, schemas, install, tests. Xóa thư mục là gỡ sạch — một invariant CI cấm chuỗi <code>.claude/skills/</code> trong <code>harness/</code>.</span></p>
 
     <div class="rig">
-      <div class="rcell"><div class="rt">🧩 <span class="en">107 skills</span><span class="vi">107 skill</span><span class="rn">plugins/hs</span></div><ul><li><span class="en">SDLC spine: plan · cook · test · ship</span><span class="vi">Xương sống: plan · cook · test · ship</span></li><li><span class="en">orchestrators, review, debug, research, ideation, docs</span><span class="vi">điều phối, review, debug, nghiên cứu, ý tưởng, docs</span></li><li><span class="en">packaged as plugin <code>hs</code> → <code>/hs:plan</code></span><span class="vi">đóng gói plugin <code>hs</code> → <code>/hs:plan</code></span></li></ul></div>
+      <div class="rcell"><div class="rt">🧩 <span class="en">106 skills</span><span class="vi">106 skill</span><span class="rn">plugins/hs</span></div><ul><li><span class="en">SDLC spine: plan · cook · test · ship</span><span class="vi">Xương sống: plan · cook · test · ship</span></li><li><span class="en">orchestrators, review, debug, research, ideation, docs</span><span class="vi">điều phối, review, debug, nghiên cứu, ý tưởng, docs</span></li><li><span class="en">packaged as plugin <code>hs</code> → <code>/hs:plan</code></span><span class="vi">đóng gói plugin <code>hs</code> → <code>/hs:plan</code></span></li></ul></div>
       <div class="rcell"><div class="rt">🪝 <span class="en">48 hooks · 3 tiers</span><span class="vi">48 hook · 3 hạng</span><span class="rn">/hooks</span></div><ul><li><span class="en">telemetry sinks (ON, fail-open)</span><span class="vi">sink telemetry (ON, fail-open)</span></li><li><span class="en">memory-gap nudge (OFF)</span><span class="vi">memory-gap nudge (OFF)</span></li><li><span class="en">gate_stage · write_guard (compliance)</span><span class="vi">gate_stage · write_guard (compliance)</span></li></ul></div>
       <div class="rcell"><div class="rt">🛠️ <span class="en">123 scripts</span><span class="vi">123 script</span><span class="rn">/scripts</span></div><ul><li><span class="en">stage_detector · artifact_check · fs_guard</span><span class="vi">stage_detector · artifact_check · fs_guard</span></li><li>claims · task_store · plan_approval</li><li>analyze_telemetry · spec_graph · decision_register</li></ul></div>
       <div class="rcell"><div class="rt">📐 <span class="en">11 rules</span><span class="vi">11 rule</span><span class="rn">/rules</span></div><ul><li><code>harness-contract.md</code> <span class="en">(≤60 lines, always-load)</span><span class="vi">(≤60 dòng, luôn-load)</span></li><li>tdd-discipline · verification-mechanism</li><li>workflow-handoffs · terminal-voice</li></ul></div>
@@ -803,7 +881,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--spec)"><span class="pv" style="flex:1"></span><a class="nx" href="#guides"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All guides</span><span class="vi">Mục lục</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--spec)"><span class="pv" style="flex:1"></span><a class="nx" href="#guides"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All guides</span><span class="vi">Mục lục</span></span></a></div></div>
 </div>
 <div class="route" data-route="guides">
 <!-- ===================== GUIDES LANDING ===================== -->
@@ -819,7 +897,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   <p class="lead cat-intro"><span class="en">Install in one command, then watch one change flow end to end.</span><span class="vi">Cài trong một lệnh, rồi xem một thay đổi đi hết quy trình.</span></p>
   <div class="cards grid-2">
     <a class="card" href="#quickstart" style="--ac:var(--ok)"><h3><span class="pin"></span><span class="en">Quick start</span><span class="vi">Bắt đầu</span></h3><p><span class="en">Install, then run your first plan → cook → test → ship.</span><span class="vi">Cài đặt, rồi chạy vòng đầu tiên: plan → cook → test → ship.</span></p></a>
-    <a class="card" href="#install" style="--ac:var(--ok)"><h3><span class="pin"></span><span class="en">Install</span><span class="vi">Cài đặt</span></h3><p><span class="en"></span><span class="vi"></span></p></a>
+    <a class="card" href="#install" style="--ac:var(--ok)"><h3><span class="pin"></span><span class="en">Install</span><span class="vi">Cài đặt</span></h3><p><span class="en">Drop the harness into any repo and verify it wired in.</span><span class="vi">Thả harness vào repo bất kỳ và kiểm tra đã gắn đúng.</span></p></a>
     <a class="card" href="#journey" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Journey</span><span class="vi">Hành trình</span></h3><p><span class="en">Watch one change flow from idea to shipped.</span><span class="vi">Xem một thay đổi đi từ ý tưởng đến khi ship.</span></p></a>
   </div>
 </section>
@@ -863,7 +941,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   <p class="lead cat-intro"><span class="en">Inside the machinery: the gate, standards, telemetry, memory — and where it is headed.</span><span class="vi">Bên trong bộ máy: gate, standards, telemetry, bộ nhớ — và hướng đi.</span></p>
   <div class="cards grid-2">
     <a class="card" href="#harness" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">The rig</span><span class="vi">Bộ máy</span></h3><p><span class="en">Hooks, scripts, schemas, and the gate that says no.</span><span class="vi">Hook, script, schema, và gate biết nói không.</span></p></a>
-    <a class="card" href="#agents" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">Agents</span><span class="vi">Agent</span></h3><p><span class="en">The 18 specialized subagents and the skills that deploy them.</span><span class="vi">15 subagent chuyên biệt và các skill triển khai chúng.</span></p></a>
+    <a class="card" href="#agents" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">Agents</span><span class="vi">Agent</span></h3><p><span class="en">The 18 specialized subagents and the skills that deploy them.</span><span class="vi">18 subagent chuyên biệt và các skill triển khai chúng.</span></p></a>
     <a class="card" href="#standards" style="--ac:var(--crit)"><h3><span class="pin"></span><span class="en">Standards & DoD</span><span class="vi">Standards & DoD</span></h3><p><span class="en">One tree of rules and a gate that blocks on them — plus Definition of Done.</span><span class="vi">Một cây luật và gate chặn theo chúng — kèm Definition of Done.</span></p></a>
     <a class="card" href="#telemetry" style="--ac:var(--tel)"><h3><span class="pin"></span><span class="en">Telemetry</span><span class="vi">Đo lường</span></h3><p><span class="en">Two books, five sinks, and an honest list of what it cannot measure.</span><span class="vi">Hai sổ, năm sink, và danh sách trung thực cái không đo được.</span></p></a>
     <a class="card" href="#memory" style="--ac:var(--gold)"><h3><span class="pin"></span><span class="en">Memory</span><span class="vi">Bộ nhớ</span></h3><p><span class="en">Decisions, glossary, backlog, lessons — what outlives the session.</span><span class="vi">Quyết định, thuật ngữ, backlog, bài học — cái sống lâu hơn phiên.</span></p></a>
@@ -883,7 +961,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--spec)"><a class="pv" href="#hub"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Overview</span><span class="vi">Tổng quan</span></span></a><a class="nx" href="#quickstart"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Quick start</span><span class="vi">Bắt đầu</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--spec)"><a class="pv" href="#hub"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Overview</span><span class="vi">Tổng quan</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#quickstart"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Quick start</span><span class="vi">Bắt đầu</span></span></a></div></div>
 </div>
 <div class="route" data-route="quickstart">
 <!-- ===================== QUICK START ===================== -->
@@ -1047,7 +1125,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--ok)"><a class="pv" href="#guides"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All guides</span><span class="vi">Mục lục</span></span></a><a class="nx" href="#install"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Install</span><span class="vi">Cài đặt</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--ok)"><a class="pv" href="#guides"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All guides</span><span class="vi">Mục lục</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#install"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Install</span><span class="vi">Cài đặt</span></span></a></div></div>
 </div>
 <div class="route" data-route="install">
 <!-- ===================== INSTALL ===================== -->
@@ -1177,7 +1255,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--ok)"><a class="pv" href="#quickstart"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Quick start</span><span class="vi">Bắt đầu</span></span></a><a class="nx" href="#journey"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Journey</span><span class="vi">Hành trình</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--ok)"><a class="pv" href="#quickstart"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Quick start</span><span class="vi">Bắt đầu</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#journey"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Journey</span><span class="vi">Hành trình</span></span></a></div></div>
 </div>
 <div class="route" data-route="journey">
 <!-- ===================== JOURNEY ===================== -->
@@ -1441,7 +1519,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--gold)"><a class="pv" href="#install"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Install</span><span class="vi">Cài đặt</span></span></a><a class="nx" href="#plan"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:plan</span><span class="vi">hs:plan</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--gold)"><a class="pv" href="#install"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Install</span><span class="vi">Cài đặt</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#plan"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:plan</span><span class="vi">hs:plan</span></span></a></div></div>
 </div>
 <div class="route" data-route="plan">
 <!-- ===================== HS:PLAN ===================== -->
@@ -1602,7 +1680,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--spec)"><a class="pv" href="#journey"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Journey</span><span class="vi">Hành trình</span></span></a><a class="nx" href="#cook"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:cook</span><span class="vi">hs:cook</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--spec)"><a class="pv" href="#journey"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Journey</span><span class="vi">Hành trình</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#cook"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:cook</span><span class="vi">hs:cook</span></span></a></div></div>
 </div>
 <div class="route" data-route="cook">
 <!-- ===================== HS:COOK ===================== -->
@@ -1728,7 +1806,7 @@ e2e: 2026-06-13T15:29:07.109629+00:00 | 12 passed, 0 failed | transport=simulate
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--rel)"><a class="pv" href="#plan"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:plan</span><span class="vi">hs:plan</span></span></a><a class="nx" href="#test"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:test</span><span class="vi">hs:test</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--rel)"><a class="pv" href="#plan"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:plan</span><span class="vi">hs:plan</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#test"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:test</span><span class="vi">hs:test</span></span></a></div></div>
 </div>
 <div class="route" data-route="test">
 <!-- ===================== HS:TEST ===================== -->
@@ -1892,7 +1970,7 @@ e2e: 2026-06-13T15:29:07.109629+00:00 | 12 passed, 0 failed | transport=simulate
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--crit)"><a class="pv" href="#cook"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:cook</span><span class="vi">hs:cook</span></span></a><a class="nx" href="#ship"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:ship</span><span class="vi">hs:ship</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--crit)"><a class="pv" href="#cook"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:cook</span><span class="vi">hs:cook</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#ship"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:ship</span><span class="vi">hs:ship</span></span></a></div></div>
 </div>
 <div class="route" data-route="ship">
 <!-- ===================== HS:SHIP ===================== -->
@@ -2024,7 +2102,7 @@ e2e: 2026-06-13T15:29:07.109629+00:00 | 12 passed, 0 failed | transport=simulate
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--ok)"><a class="pv" href="#test"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:test</span><span class="vi">hs:test</span></span></a><a class="nx" href="#bakeoff"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:bakeoff</span><span class="vi">hs:bakeoff</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--ok)"><a class="pv" href="#test"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:test</span><span class="vi">hs:test</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#bakeoff"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">hs:bakeoff</span><span class="vi">hs:bakeoff</span></span></a></div></div>
 </div>
 <div class="route" data-route="bakeoff">
 <!-- ===================== HS:BAKEOFF ===================== -->
@@ -2243,7 +2321,7 @@ exit: 0 (0 = winner)
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--gold)"><a class="pv" href="#ship"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:ship</span><span class="vi">hs:ship</span></span></a><a class="nx" href="#catalog"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All skills</span><span class="vi">Toàn bộ skill</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--gold)"><a class="pv" href="#ship"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:ship</span><span class="vi">hs:ship</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#catalog"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All skills</span><span class="vi">Toàn bộ skill</span></span></a></div></div>
 </div>
 <div class="route" data-route="catalog">
 <!-- ===================== CATALOG ===================== -->
@@ -2262,7 +2340,7 @@ exit: 0 (0 = winner)
         <div class="who" style="color:var(--rel)"><span class="en">The full hs:* suite — grouped by family</span><span class="vi">Toàn bộ bộ hs:* — nhóm theo họ</span></div>
         <h2><span class="en">All skills</span><span class="vi">Toàn bộ skill</span></h2>
       </div>
-      <div class="ver">107 skills</div>
+      <div class="ver">106 skills</div>
     </div>
     <div class="divider" style="--ac:var(--rel)"></div>
 
@@ -2330,6 +2408,8 @@ exit: 0 (0 = winner)
       <div class="card" style="--ac:var(--bad)"><h3><span class="pin"></span>hs:security-scan <span class="ttag workflow">workflow</span></h3><p><span class="en">Secrets, CVEs, injection, and authorization checks across the diff or whole codebase.</span><span class="vi">Kiểm secrets, CVE, injection và authorization trên diff hoặc toàn codebase.</span></p></div>
       <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>hs:scenario <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Decompose a feature across 12 dimensions for edge cases — boundary, concurrency, security, UX, and more.</span><span class="vi">Phân tách tính năng qua 12 chiều để tìm edge case — boundary, concurrency, bảo mật, UX và hơn nữa.</span></p></div>
       <div class="card" style="--ac:var(--tel)"><h3><span class="pin"></span>hs:predict <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Five expert personas debate a proposed change before it lands — adversarial pre-flight for risky diffs.</span><span class="vi">Năm persona chuyên gia tranh luận thay đổi đề xuất trước khi áp — pre-flight đối nghịch cho diff rủi ro.</span></p></div>
+      <div class="card" style="--ac:var(--ok)"><h3><span class="pin"></span>hs:contract-test <span class="ttag workflow">workflow</span></h3><p><span class="en">Validate a live contract by running the real probe — call the API/CLI, check status, exit code, and payload — then anchor the result as manual evidence. Proves a contract holds before ship; never gate-driven.</span><span class="vi">Kiểm chứng contract sống bằng probe thật — gọi API/CLI, kiểm status, exit code và payload — rồi neo kết quả làm bằng chứng thủ công. Chứng minh contract đúng trước khi ship; không do gate lái.</span></p></div>
+      <div class="card" style="--ac:var(--crit)"><h3><span class="pin"></span>hs:manual-test <span class="ttag workflow">workflow</span></h3><p><span class="en">Session-based manual / exploratory test (SBTM charter → session → debrief) emitting anchored, admissible evidence. For behavior a static result file can't capture — exploratory passes, manual API/UX checks, staging smoke.</span><span class="vi">Test thủ công / khám phá theo phiên (SBTM charter → phiên → debrief) phát ra bằng chứng có neo, hợp lệ. Cho hành vi mà file kết quả tĩnh không nắm được — lượt khám phá, kiểm API/UX thủ công, smoke staging.</span></p></div>
     </div>
 
     <!-- ── Debug / fix ── -->
@@ -2381,6 +2461,7 @@ exit: 0 (0 = winner)
       <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>hs:excalidraw <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Editable <code>.excalidraw</code> canvases — hand-drawn-style diagrams that stay in the repo.</span><span class="vi">Canvas <code>.excalidraw</code> chỉnh sửa được — sơ đồ phong cách vẽ tay lưu trong repo.</span></p></div>
       <div class="card" style="--ac:var(--tel)"><h3><span class="pin"></span>hs:document-skills <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Read and write <code>.docx</code> / <code>.pdf</code> / <code>.pptx</code> / <code>.xlsx</code> — bridge between repo and office formats.</span><span class="vi">Đọc và ghi <code>.docx</code> / <code>.pdf</code> / <code>.pptx</code> / <code>.xlsx</code> — cầu nối giữa repo và định dạng office.</span></p></div>
       <div class="card" style="--ac:var(--ok)"><h3><span class="pin"></span>hs:remember <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Capture the session's real knowledge — decisions, non-obvious facts, user feedback — into the DEC ledger, memory, or backlog after you approve each entry.</span><span class="vi">Ghi lại kiến thức thật của phiên — quyết định, sự thật không hiển nhiên, feedback người dùng — vào ledger DEC, memory hoặc backlog sau khi bạn duyệt từng mục.</span></p></div>
+      <div class="card" style="--ac:var(--spec)"><h3><span class="pin"></span>hs:drawio <span class="ttag workflow">workflow</span></h3><p><span class="en">Polished, editable <code>.drawio</code> diagrams — 10,000+ branded shapes (AWS/Azure/GCP/Cisco/K8s/UML/ER/network), swimlanes, strict geometry, export to PNG/SVG/PDF. Opens in draw.io desktop and diagrams.net.</span><span class="vi">Sơ đồ <code>.drawio</code> chỉn chu, sửa được — hơn 10.000 shape có thương hiệu (AWS/Azure/GCP/Cisco/K8s/UML/ER/network), swimlane, hình học chặt, xuất PNG/SVG/PDF. Mở bằng draw.io desktop và diagrams.net.</span></p></div>
     </div>
 
     <!-- ── Build the harness ── -->
@@ -2392,6 +2473,7 @@ exit: 0 (0 = winner)
       <div class="card" style="--ac:var(--spec)"><h3><span class="pin"></span>hs:mcp-builder <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Build MCP servers — scaffolds transport, tool declarations, and handler stubs.</span><span class="vi">Xây MCP server — tạo khung transport, khai báo tool và handler stub.</span></p></div>
       <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>hs:agentize <span class="ttag workflow">workflow</span></h3><p><span class="en">Turn existing code into an agent-friendly CLI or MCP — adds structured I/O and tool declarations.</span><span class="vi">Biến code hiện có thành CLI hoặc MCP thân thiện với agent — thêm I/O có cấu trúc và khai báo tool.</span></p></div>
       <div class="card" style="--ac:var(--ok)"><h3><span class="pin"></span>hs:bootstrap <span class="ttag workflow">workflow</span></h3><p><span class="en">Bootstrap a new project with harness integration — scaffolds structure, CI, and hook registration.</span><span class="vi">Khởi tạo dự án mới với tích hợp harness — tạo khung cấu trúc, CI và đăng ký hook.</span></p></div>
+      <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>hs:rule-author <span class="ttag workflow">workflow</span></h3><p><span class="en">Author a safe per-repo review-rule override at <code>standards.user.yaml</code> — detects conflicts with the shipped standards, narrows overlapping scope, and records a mandatory reason on a real conflict. Tune a rule without editing the shipped tree.</span><span class="vi">Soạn override review-rule cho repo an toàn ở <code>standards.user.yaml</code> — phát hiện xung đột với standards gốc, thu hẹp scope chồng lấn, ghi lý do bắt buộc khi xung đột thật. Tinh chỉnh rule mà không sửa cây gốc.</span></p></div>
     </div>
 
     <!-- ── Project ops ── -->
@@ -2408,6 +2490,7 @@ exit: 0 (0 = winner)
       <div class="card" style="--ac:var(--tel)"><h3><span class="pin"></span>hs:insights <span class="ttag workflow">workflow</span></h3><p><span class="en">Read-only usage insights from telemetry — hot vs never-used skills, workflow chains, gate-block patterns — with optimization suggestions. Never mutates.</span><span class="vi">Insight sử dụng chỉ-đọc từ telemetry — skill hay dùng vs không dùng, chuỗi workflow, mẫu gate-block — kèm gợi ý tối ưu. Không bao giờ sửa.</span></p></div>
       <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>hs:compound <span class="ttag workflow">workflow</span></h3><p><span class="en">Read-only self-improvement proposal — compounds telemetry lenses + workflow candidates + backlog + a completeness critic into one ranked "improve next" list. The forward-looking twin of <code>hs:insights</code>; never mutates, never auto-creates a skill.</span><span class="vi">Đề xuất tự cải tiến chỉ-đọc — gộp lens telemetry + ứng viên workflow + backlog + completeness critic thành một danh sách "cải tiến tiếp" xếp hạng. Twin nhìn-tới của <code>hs:insights</code>; không bao giờ sửa, không tự đẻ skill.</span></p></div>
       <div class="card" style="--ac:var(--rel)"><h3><span class="pin"></span>hs:techstack <span class="ttag workflow">workflow</span></h3><p><span class="en">Read-only tech-stack detection — scans a target repo for build/dependency markers (Python/JS-TS/Go/Rust/Java) so the harness adapts its test command instead of assuming pytest. Never mutates.</span><span class="vi">Dò tech-stack chỉ-đọc — quét repo đích tìm marker build/dependency (Python/JS-TS/Go/Rust/Java) để harness chỉnh lệnh test thay vì mặc định pytest. Không bao giờ sửa.</span></p></div>
+      <div class="card" style="--ac:var(--ok)"><h3><span class="pin"></span>hs:cleanup <span class="ttag workflow">workflow</span></h3><p><span class="en">Safely remove files an over-install left behind — auto-clears pristine version-dropped files, decides modified ones interactively. Use after upgrading the harness or when verify reports orphans.</span><span class="vi">Gỡ an toàn file mà bản cài thừa để lại — tự xóa file nguyên bản bị bỏ phiên bản, quyết định file đã sửa theo kiểu tương tác. Dùng sau khi nâng cấp harness hoặc khi verify báo orphan.</span></p></div>
     </div>
 
     <!-- ── Autonomy ── -->
@@ -2416,6 +2499,7 @@ exit: 0 (0 = winner)
     <div class="cards grid-2">
       <div class="card" style="--ac:var(--tel)"><h3><span class="pin"></span>hs:afk <span class="ttag workflow">workflow</span></h3><p><span class="en">Run a plan or PRD unattended — preflight readiness check, then route to a Ralph sandbox loop. The harness gates still fire; <code>HARNESS_AUTONOMY=god</code> is the typical pairing.</span><span class="vi">Chạy plan hoặc PRD không cần giám sát — kiểm tra preflight, rồi định tuyến vào vòng lặp sandbox Ralph. Gate harness vẫn kích hoạt; <code>HARNESS_AUTONOMY=god</code> thường đi kèm.</span></p></div>
       <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>hs:autonomous-bell <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Arm a self-ending unattended run — a reminder cron carries a post-check protocol and a consecutive-empty counter whose STOP is deterministic.</span><span class="vi">Trang bị cho lần chạy không giám sát tự kết thúc — cron nhắc mang theo protocol hậu-kiểm và bộ đếm rỗng-liên-tiếp với điều kiện STOP xác định.</span></p></div>
+      <div class="card" style="--ac:var(--spec)"><h3><span class="pin"></span>hs:goal <span class="ttag workflow">workflow</span></h3><p><span class="en">Author a built-in <code>/goal</code> run — interview the objective into a self-contained <code>goal.md</code>, arm the autonomy bell, scaffold the cycle dir, then hand the loop to built-in <code>/goal</code>. For unattended objective-until-met runs that stay memory-blind between ticks.</span><span class="vi">Soạn một lần chạy <code>/goal</code> built-in — phỏng vấn mục tiêu thành <code>goal.md</code> tự chứa, trang bị autonomy bell, dựng cycle dir, rồi giao vòng lặp cho <code>/goal</code> built-in. Cho lần chạy không giám sát tới-khi-đạt, vốn mù trí nhớ giữa các tick.</span></p></div>
     </div>
 
     <!-- ── AI & media ── -->
@@ -2467,6 +2551,7 @@ exit: 0 (0 = winner)
       <div class="card" style="--ac:var(--crit)"><h3><span class="pin"></span>hs:web-testing <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Web testing with Playwright, Vitest, and k6 — E2E, unit, load, security, visual, a11y, cross-browser.</span><span class="vi">Kiểm thử web với Playwright, Vitest và k6 — E2E, unit, load, bảo mật, visual, a11y, đa trình duyệt.</span></p></div>
       <div class="card" style="--ac:var(--rel)"><h3><span class="pin"></span>hs:agent-browser <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Automate browsers and apps — testing, screenshots, forms, scraping, cloud browsers, and Electron.</span><span class="vi">Tự động hóa trình duyệt và app — kiểm thử, ảnh chụp, form, scraping, cloud browser và Electron.</span></p></div>
       <div class="card" style="--ac:var(--rel)"><h3><span class="pin"></span>hs:chrome-profile <span class="ttag knowledge">knowledge</span></h3><p><span class="en">Drive a real Chrome profile via DevTools MCP — profile discovery, live probing, and URL-anchored playbooks.</span><span class="vi">Điều khiển một profile Chrome thật qua DevTools MCP — dò profile, probe trực tiếp và playbook neo theo URL.</span></p></div>
+      <div class="card" style="--ac:var(--gold)"><h3><span class="pin"></span>hs:release <span class="ttag workflow">workflow</span></h3><p><span class="en">Cut a harness release end to end — bump version, push tag, sync the public showcase, pack <code>dist/</code> + gh release. Owner-only; pauses for confirmation before every outward-facing action.</span><span class="vi">Cắt một bản phát hành harness từ đầu tới cuối — tăng version, đẩy tag, đồng bộ showcase công khai, đóng gói <code>dist/</code> + gh release. Chỉ owner; dừng chờ xác nhận trước mỗi hành động hướng-ra-ngoài.</span></p></div>
     </div>
 
     <!-- ── Integrations ── -->
@@ -2499,7 +2584,7 @@ exit: 0 (0 = winner)
       <ul>
         <li><span class="en">Every <code>hs:*</code> skill is a structured prompt. It guides Claude Code but does not block the model from deviating.</span><span class="vi">Mỗi skill <code>hs:*</code> là prompt có cấu trúc. Nó hướng dẫn Claude Code nhưng không chặn model sai lệch.</span></li>
         <li><span class="en">Blocking happens in hooks and scripts — <code>gate_stage</code> (compliance), <code>write_guard</code>, and the git pre-push backstop.</span><span class="vi">Chặn xảy ra trong hook và script — <code>gate_stage</code> (compliance), <code>write_guard</code> và git pre-push backstop.</span></li>
-        <li><span class="en"><b>99</b> user-invocable skills as of this build (every one carries <code>user-invocable: true</code>). Skills are added over time — <code>harness/plugins/hs/</code> is the live source of truth.</span><span class="vi"><b>99</b> skill người-gọi-được tính đến bản build này (mỗi cái mang <code>user-invocable: true</code>). Skill được thêm theo thời gian — <code>harness/plugins/hs/</code> là nguồn chuẩn trực tiếp.</span></li>
+        <li><span class="en"><b>106</b> user-invocable skills as of this build (every one carries <code>user-invocable: true</code>). Skills are added over time — <code>harness/plugins/hs/</code> is the live source of truth.</span><span class="vi"><b>106</b> skill người-gọi-được tính đến bản build này (mỗi cái mang <code>user-invocable: true</code>). Skill được thêm theo thời gian — <code>harness/plugins/hs/</code> là nguồn chuẩn trực tiếp.</span></li>
       </ul>
     </div>
 
@@ -2509,12 +2594,12 @@ exit: 0 (0 = winner)
       <details><summary><span class="en">Are skills the thing that blocks bad output?</span><span class="vi">Skill có phải thứ chặn đầu ra xấu?</span></summary><div class="fa"><span class="en">No. A skill is prose — a structured prompt. Blocking happens in hooks and scripts (<code>gate_stage</code>, <code>write_guard</code>, the pre-push backstop). A skill is only as strong as the hook that enforces it.</span><span class="vi">Không. Skill là prose — một prompt có cấu trúc. Việc chặn nằm ở hook và script (<code>gate_stage</code>, <code>write_guard</code>, backstop pre-push). Skill chỉ mạnh bằng hook thực thi nó.</span></div></details>
       <details><summary><span class="en">How do I invoke a skill?</span><span class="vi">Gọi một skill thế nào?</span></summary><div class="fa"><span class="en">Type <code>/hs:&lt;name&gt;</code> in Claude Code — e.g. <code>/hs:plan</code>. Skills can be chained (orchestrators spawn subagents) or invoked standalone.</span><span class="vi">Gõ <code>/hs:&lt;tên&gt;</code> trong Claude Code — ví dụ <code>/hs:plan</code>. Skill có thể nối (orchestrator sinh subagent) hoặc dùng độc lập.</span></div></details>
       <details><summary><span class="en">I don't know which skill fits — what now?</span><span class="vi">Không biết skill nào hợp — làm sao?</span></summary><div class="fa"><span class="en"><code>hs:find-skills</code> analyzes your intent and routes you to the right one, with the exact invoke command.</span><span class="vi"><code>hs:find-skills</code> phân tích ý định và định tuyến bạn đến đúng skill, kèm lệnh gọi chính xác.</span></div></details>
-      <details><summary><span class="en">Is the count exact?</span><span class="vi">Số lượng có chính xác không?</span></summary><div class="fa"><span class="en">Yes — <b>99</b> skills at this build, each with <code>user-invocable: true</code> in its <code>SKILL.md</code>. New skills land over time; <code>harness/plugins/hs/</code> is the live source of truth.</span><span class="vi">Có — <b>99</b> skill ở bản build này, mỗi cái có <code>user-invocable: true</code> trong <code>SKILL.md</code>. Skill mới được thêm theo thời gian; <code>harness/plugins/hs/</code> là nguồn chuẩn trực tiếp.</span></div></details>
+      <details><summary><span class="en">Is the count exact?</span><span class="vi">Số lượng có chính xác không?</span></summary><div class="fa"><span class="en">Yes — <b>106</b> skills at this build, each with <code>user-invocable: true</code> in its <code>SKILL.md</code>. New skills land over time; <code>harness/plugins/hs/</code> is the live source of truth.</span><span class="vi">Có — <b>106</b> skill ở bản build này, mỗi cái có <code>user-invocable: true</code> trong <code>SKILL.md</code>. Skill mới được thêm theo thời gian; <code>harness/plugins/hs/</code> là nguồn chuẩn trực tiếp.</span></div></details>
     </div>
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--rel)"><a class="pv" href="#bakeoff"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:bakeoff</span><span class="vi">hs:bakeoff</span></span></a><a class="nx" href="#configure"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Configure</span><span class="vi">Cấu hình</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--rel)"><a class="pv" href="#bakeoff"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">hs:bakeoff</span><span class="vi">hs:bakeoff</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#configure"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Configure</span><span class="vi">Cấu hình</span></span></a></div></div>
 </div>
 <div class="route" data-route="configure">
 <!-- ===================== CONFIGURE ===================== -->
@@ -2615,7 +2700,7 @@ exit: 0 (0 = winner)
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--tel)"><a class="pv" href="#catalog"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All skills</span><span class="vi">Toàn bộ skill</span></span></a><a class="nx" href="#voice"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Terminal voice</span><span class="vi">Giọng terminal</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--tel)"><a class="pv" href="#catalog"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All skills</span><span class="vi">Toàn bộ skill</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#voice"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Terminal voice</span><span class="vi">Giọng terminal</span></span></a></div></div>
 </div>
 <div class="route" data-route="voice">
 <!-- ===================== TERMINAL VOICE ===================== -->
@@ -2624,11 +2709,11 @@ exit: 0 (0 = winner)
     <div class="skill-head" style="--ac:var(--gold)">
       <div class="badge"><svg width="34" height="34" viewBox="0 0 40 40" fill="none"><path d="M8 16v8M14 11v18M20 7v26M26 12v16M32 17v6" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round"/></svg></div>
       <div class="ttl"><div class="who"><span class="en">How the harness talks — and the fence that keeps it surface-only</span><span class="vi">Cách harness nói — và hàng rào giữ nó chỉ ở bề mặt</span></div><h2><span class="en">Terminal voice</span><span class="vi">Giọng terminal</span></h2></div>
-      <div class="ver">7 knobs</div>
+      <div class="ver">6 knobs</div>
     </div>
     <div class="divider" style="--ac:var(--gold)"></div>
 
-    <p class="lead" style="margin-bottom:18px"><span class="en">The harness lets you tune <b>how it talks in the terminal</b> — bluntness, persona, explanation depth, how hard it interviews you. Seven knobs in <code>terminal-voice.yaml</code>, resolved by <code>voice_prefs.py</code>, injected at session start. The whole system rests on one invariant: <b>these knobs change the conversational prose and nothing else</b> — never your code, your artifacts, your evidence, or a gate's decision.</span><span class="vi">Harness cho bạn chỉnh <b>cách nó nói trong terminal</b> — độ thẳng, persona, độ sâu giải thích, độ gắt khi phỏng vấn bạn. Bảy núm trong <code>terminal-voice.yaml</code>, do <code>voice_prefs.py</code> phân giải, tiêm lúc mở phiên. Cả hệ thống dựa trên một bất biến: <b>các núm này chỉ đổi prose hội thoại, không gì khác</b> — không bao giờ đụng code, artifact, bằng chứng, hay quyết định gate.</span></p>
+    <p class="lead" style="margin-bottom:18px"><span class="en">The harness lets you tune <b>how it talks in the terminal</b> — bluntness, persona, explanation depth, how hard it interviews you. Six knobs in <code>terminal-voice.yaml</code>, resolved by <code>voice_prefs.py</code>, injected at session start. The whole system rests on one invariant: <b>these knobs change the conversational prose and nothing else</b> — never your code, your artifacts, your evidence, or a gate's decision.</span><span class="vi">Harness cho bạn chỉnh <b>cách nó nói trong terminal</b> — độ thẳng, persona, độ sâu giải thích, độ gắt khi phỏng vấn bạn. Sáu núm trong <code>terminal-voice.yaml</code>, do <code>voice_prefs.py</code> phân giải, tiêm lúc mở phiên. Cả hệ thống dựa trên một bất biến: <b>các núm này chỉ đổi prose hội thoại, không gì khác</b> — không bao giờ đụng code, artifact, bằng chứng, hay quyết định gate.</span></p>
 
     <!-- what it is -->
     <h2 class="sectitle" id="tv-what"><span class="en">What it is — and isn't</span><span class="vi">Nó là gì — và không là gì</span></h2>
@@ -2713,9 +2798,9 @@ exit: 0 (0 = winner)
       <div class="card" style="--ac:var(--rel)"><h3><span class="pin"></span><code>dad-joke</code> <span class="ptag fun">fun</span></h3><p><span class="en">One groan-worthy pun, then the real answer.</span><span class="vi">Một câu chơi chữ nhăn mặt, rồi câu trả lời thật.</span></p></div>
     </div>
 
-    <!-- coding level + no_markdown -->
-    <h2 class="sectitle" id="tv-coding"><span class="en">Explanation depth — <code>coding_level</code> 0–5</span><span class="vi">Độ sâu giải thích — <code>coding_level</code> 0–5</span></h2>
-    <p class="muted" style="margin:-2px 0 14px"><span class="en">Depth and format of terminal answers. Changes depth <b>only</b> — never correctness, never which files are touched. Default <b>5</b>.</span><span class="vi">Độ sâu và định dạng câu trả lời terminal. Chỉ đổi độ sâu — không đổi tính đúng, không đổi file bị đụng. Mặc định <b>5</b>.</span></p>
+    <!-- terminal_voice_level + no_markdown -->
+    <h2 class="sectitle" id="tv-coding"><span class="en">Explanation depth — <code>terminal_voice_level</code> 0–5</span><span class="vi">Độ sâu giải thích — <code>terminal_voice_level</code> 0–5</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en">Depth and format of terminal answers — and interview/turn verbosity (the former <code>detail_level</code> folds in here). Changes depth <b>only</b> — never correctness, never which files are touched. Default <b>5</b>.</span><span class="vi">Độ sâu và định dạng câu trả lời terminal — và độ dài hội thoại/lượt (knob <code>detail_level</code> cũ gộp vào đây). Chỉ đổi độ sâu — không đổi tính đúng, không đổi file bị đụng. Mặc định <b>5</b>.</span></p>
     <table class="modetable" style="--ac:var(--gold)">
       <thead><tr><th><span class="en">Level</span><span class="vi">Mức</span></th><th><span class="en">Depth</span><span class="vi">Độ sâu</span></th></tr></thead>
       <tbody>
@@ -2737,9 +2822,22 @@ exit: 0 (0 = winner)
       <tbody>
         <tr><td><code>interview_rigor</code></td><td>light · <b>standard</b> · deep</td><td><span class="en">depth of challenge / gap-probing — separate from length</span><span class="vi">độ thách thức / dò khe-hở — tách khỏi độ dài</span></td></tr>
         <tr><td><code>action_prompting</code></td><td>minimal · <b>standard</b> · proactive</td><td><span class="en">how many next-step suggestions at turn boundaries</span><span class="vi">bao nhiêu gợi ý bước-kế ở cuối lượt</span></td></tr>
-        <tr><td><code>detail_level</code></td><td>concise · <b>standard</b> · verbose</td><td><span class="en">conversational verbosity — <b>not</b> report length (that's <code>output.yaml</code>)</span><span class="vi">độ dài hội thoại — <b>không phải</b> độ dài báo cáo (cái đó ở <code>output.yaml</code>)</span></td></tr>
       </tbody>
     </table>
+
+    <!-- deliverable register — output.yaml -->
+    <h2 class="sectitle" id="tv-output"><span class="en">Deliverable register — <code>output.yaml</code> (a separate file)</span><span class="vi">Register sản phẩm — <code>output.yaml</code> (file riêng)</span></h2>
+    <p class="muted" style="margin:-2px 0 14px"><span class="en">These are <b>not</b> terminal-voice knobs — they live in <code>output.yaml</code> and shape the <b>deliverable</b> (generated reports and code), not the live conversation. Resolve every value with <code>output_config.py --resolved</code>. Evidence (<code>file:line</code> / IDs / SHAs / numbers / quotes) stays invariant at every level.</span><span class="vi">Đây <b>không</b> phải núm giọng terminal — chúng ở <code>output.yaml</code> và định hình <b>sản phẩm</b> (báo cáo và code sinh ra), không phải hội thoại trực tiếp. Phân giải mọi giá trị bằng <code>output_config.py --resolved</code>. Bằng chứng (<code>file:line</code> / ID / SHA / số / trích dẫn) bất biến ở mọi mức.</span></p>
+    <table class="modetable" style="--ac:var(--spec)">
+      <thead><tr><th><span class="en">Knob</span><span class="vi">Núm</span></th><th><span class="en">Values (default)</span><span class="vi">Giá trị (mặc định)</span></th><th><span class="en">Shapes</span><span class="vi">Định hình</span></th></tr></thead>
+      <tbody>
+        <tr><td><code>language</code></td><td>vi · en <span class="x">(vi)</span></td><td><span class="en">language of generated prose — English instructions in, chosen language out</span><span class="vi">ngôn ngữ prose sinh ra — chỉ dẫn tiếng Anh vào, ngôn ngữ đã chọn ra</span></td></tr>
+        <tr><td><code>audience</code></td><td>off · 0–5 <span class="x">(off)</span></td><td><span class="en">prose register for <b>chat + reports</b> — 0 plain (non-technical) … 5 peer (dense)</span><span class="vi">register prose cho <b>chat + báo cáo</b> — 0 mộc (phi kỹ thuật) … 5 ngang hàng (đặc)</span></td></tr>
+        <tr><td><code>code_style</code></td><td>off · 0–5 <span class="x">(off)</span></td><td><span class="en">adapts <b>generated code only</b> (comment density, verbosity) — 0 beginner … 5 expert. NOT scope-fenced.</span><span class="vi">chỉnh <b>chỉ code sinh ra</b> (mật độ comment, độ dài) — 0 mới … 5 chuyên gia. KHÔNG bị scope-fence.</span></td></tr>
+        <tr><td><code>humanize</code></td><td>true · <b>false</b></td><td><span class="en">apply the anti-AI-tell / natural-prose pass — default off; on when publishing externally</span><span class="vi">áp lượt anti-AI-tell / prose tự nhiên — mặc định tắt; bật khi xuất bản ra ngoài</span></td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="font-size:.84rem;margin-top:10px"><span class="en"><code>audience</code> shapes <b>prose</b>; <code>code_style</code> shapes <b>code</b> — the two are disjoint. Both are deliberately NOT merged with the scope-fenced terminal voice (disjoint fail-mode).</span><span class="vi"><code>audience</code> định hình <b>prose</b>; <code>code_style</code> định hình <b>code</b> — hai cái rời nhau. Cả hai cố tình KHÔNG gộp với giọng terminal scope-fenced (chế độ lỗi tách biệt).</span></p>
 
     <!-- scope-fence + artifact voice -->
     <h2 class="sectitle" id="tv-scope"><span class="en">The scope-fence &amp; artifact voice</span><span class="vi">Scope-fence &amp; giọng artifact</span></h2>
@@ -2764,7 +2862,7 @@ exit: 0 (0 = winner)
       <tbody>
         <tr><td><code>[persona]</code></td><td><span class="en">surface form (e.g. <code>military</code>, <code>feynman</code>, <code>pirate</code>)</span><span class="vi">hình thức (vd <code>military</code>, <code>feynman</code>, <code>pirate</code>)</span></td></tr>
         <tr><td><code>level &lt;1-9&gt;</code></td><td><code>voice_level</code></td></tr>
-        <tr><td><code>depth &lt;0-5&gt;</code></td><td><code>coding_level</code></td></tr>
+        <tr><td><code>depth &lt;0-5&gt;</code></td><td><code>terminal_voice_level</code></td></tr>
         <tr><td><code>plain on|off</code></td><td><code>no_markdown</code></td></tr>
         <tr><td><code>save</code></td><td><span class="en">persist the choice to <code>terminal-voice.yaml</code></span><span class="vi">lưu lựa chọn vào <code>terminal-voice.yaml</code></span></td></tr>
       </tbody>
@@ -2777,12 +2875,12 @@ exit: 0 (0 = winner)
       <details><summary><span class="en">If I set <code>voice_level: 9</code>, will my reports get harsher too?</span><span class="vi">Đặt <code>voice_level: 9</code> thì báo cáo có gắt hơn không?</span></summary><div class="fa"><span class="en">No. The scope-fence guarantees a report's tone is identical at level 9 and level 5. Voice changes the terminal conversation only — never generated artifacts, commits, evidence, or gate decisions.</span><span class="vi">Không. Scope-fence đảm bảo giọng báo cáo giống hệt ở mức 9 và mức 5. Giọng chỉ đổi hội thoại terminal — không bao giờ đổi artifact, commit, bằng chứng, hay quyết định gate.</span></div></details>
       <details><summary><span class="en">Does a fun persona make answers less accurate?</span><span class="vi">Persona fun có làm câu trả lời kém chính xác không?</span></summary><div class="fa"><span class="en">No. Every fun persona keeps technical accuracy intact — the joke rides on top of a correct answer, it never replaces it. Persona is form; correctness is fixed.</span><span class="vi">Không. Mọi persona fun giữ nguyên độ chính xác — câu đùa cưỡi trên câu trả lời đúng, không thay thế nó. Persona là hình thức; tính đúng là cố định.</span></div></details>
       <details><summary><span class="en">Can a high level target me personally?</span><span class="vi">Mức cao có nhắm vào cá nhân tôi không?</span></summary><div class="fa"><span class="en">Never. The universal-harm floor is target-decided and non-removable: venom at the work is allowed up to 9, but anything aimed at who you are — identity, body, family, slurs, threats — is out at every level.</span><span class="vi">Không bao giờ. Sàn universal-harm quyết theo đối-tượng và không gỡ được: gắt với công việc được tới 9, nhưng bất cứ gì nhắm vào con người bạn — danh tính, thân thể, gia đình, lăng mạ, đe dọa — đều bị loại ở mọi mức.</span></div></details>
-      <details><summary><span class="en">Is <code>interview_rigor</code> the same as making answers longer?</span><span class="vi"><code>interview_rigor</code> có phải làm câu trả lời dài hơn?</span></summary><div class="fa"><span class="en">No — rigor is depth of challenge (how hard it probes), separate from verbosity. "Concise but deep" is valid. Length is <code>detail_level</code> (conversation) and <code>output.yaml</code> (reports).</span><span class="vi">Không — rigor là độ thách thức (dò gắt cỡ nào), tách khỏi độ dài. "Ngắn mà sâu" là hợp lệ. Độ dài là <code>detail_level</code> (hội thoại) và <code>output.yaml</code> (báo cáo).</span></div></details>
+      <details><summary><span class="en">Is <code>interview_rigor</code> the same as making answers longer?</span><span class="vi"><code>interview_rigor</code> có phải làm câu trả lời dài hơn?</span></summary><div class="fa"><span class="en">No — rigor is depth of challenge (how hard it probes), separate from verbosity. "Concise but deep" is valid. Conversational length now rides <code>terminal_voice_level</code>; report length is <code>output.yaml</code>.</span><span class="vi">Không — rigor là độ thách thức (dò gắt cỡ nào), tách khỏi độ dài. "Ngắn mà sâu" là hợp lệ. Độ dài hội thoại giờ theo <code>terminal_voice_level</code>; độ dài báo cáo ở <code>output.yaml</code>.</span></div></details>
     </div>
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--gold)"><a class="pv" href="#configure"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Configure</span><span class="vi">Cấu hình</span></span></a><a class="nx" href="#cheatsheet"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Cheatsheet</span><span class="vi">Tra cứu nhanh</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--gold)"><a class="pv" href="#configure"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Configure</span><span class="vi">Cấu hình</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#cheatsheet"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Cheatsheet</span><span class="vi">Tra cứu nhanh</span></span></a></div></div>
 </div>
 <div class="route" data-route="cheatsheet">
 <!-- ===================== CHEATSHEET ===================== -->
@@ -2827,7 +2925,7 @@ exit: 0 (0 = winner)
 
     <!-- ── 2. Commands by family ── -->
     <h2 class="sectitle" id="cs-commands"><span class="en">All commands</span><span class="vi">Toàn bộ lệnh</span></h2>
-    <p class="muted" style="margin:-4px 0 14px"><span class="en">99 <code>hs:*</code> skills, grouped by what you're trying to do. Invoke any with <code>/hs:&lt;name&gt;</code>. Full descriptions in the <a href="#catalog">catalog</a>.</span><span class="vi">99 skill <code>hs:*</code>, nhóm theo điều bạn đang muốn làm. Gọi bất kỳ với <code>/hs:&lt;tên&gt;</code>. Mô tả đầy đủ trong <a href="#catalog">catalog</a>.</span></p>
+    <p class="muted" style="margin:-4px 0 14px"><span class="en">106 <code>hs:*</code> skills, grouped by what you're trying to do. Invoke any with <code>/hs:&lt;name&gt;</code>. Full descriptions in the <a href="#catalog">catalog</a>.</span><span class="vi">106 skill <code>hs:*</code>, nhóm theo điều bạn đang muốn làm. Gọi bất kỳ với <code>/hs:&lt;tên&gt;</code>. Mô tả đầy đủ trong <a href="#catalog">catalog</a>.</span></p>
 
     <div class="eyebrow"><span class="en">SDLC spine — the gated four</span><span class="vi">Xương sống SDLC — bốn bước bị gate</span></div>
     <table class="modetable" style="--ac:var(--spec)">
@@ -3099,7 +3197,7 @@ exit: 0 (0 = winner)
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--spec)"><a class="pv" href="#voice"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Terminal voice</span><span class="vi">Giọng terminal</span></span></a><a class="nx" href="#finder"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Command finder</span><span class="vi">Chọn skill</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--spec)"><a class="pv" href="#voice"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Terminal voice</span><span class="vi">Giọng terminal</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#finder"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Command finder</span><span class="vi">Chọn skill</span></span></a></div></div>
 </div>
 <div class="route" data-route="finder">
 <!-- ===================== COMMAND FINDER ===================== -->
@@ -3235,7 +3333,7 @@ exit: 0 (0 = winner)
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--gold)"><a class="pv" href="#cheatsheet"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Cheatsheet</span><span class="vi">Tra cứu nhanh</span></span></a><a class="nx" href="#glossary"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Glossary</span><span class="vi">Thuật ngữ</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--gold)"><a class="pv" href="#cheatsheet"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Cheatsheet</span><span class="vi">Tra cứu nhanh</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#glossary"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Glossary</span><span class="vi">Thuật ngữ</span></span></a></div></div>
 </div>
 <div class="route" data-route="glossary">
 <!-- ===================== GLOSSARY ===================== -->
@@ -3328,7 +3426,7 @@ exit: 0 (0 = winner)
         <tr><td><code id="gl-scope-fence">scope-fence</code></td><td><span class="en">The invariant that voice knobs change ONLY conversational prose — never code, generated docs/reports, commits, evidence (<code>file:line</code> / IDs / SHAs / quotes), or any gate decision.</span><span class="vi">Bất biến rằng núm giọng CHỈ đổi prose hội thoại — không đổi code, docs/báo cáo sinh ra, commit, bằng chứng (<code>file:line</code> / ID / SHA / trích dẫn), hay bất kỳ quyết định gate nào.</span></td><td><span class="x"><span class="en">a voice knob altering an artifact</span><span class="vi">một núm giọng đổi artifact</span></span></td><td>DEC-65</td></tr>
         <tr><td><code id="gl-artifact-voice">artifact voice</code></td><td><span class="en">The candor of an artifact TYPE, fixed once in its own spec (journal-writer "brutal honesty" / <code>hs:critique</code> neutral tone). Independent of <code>voice_level</code>.</span><span class="vi">Độ thẳng thắn của một LOẠI artifact, cố định trong spec riêng (journal-writer "brutal honesty" / <code>hs:critique</code> giọng trung tính). Độc lập với <code>voice_level</code>.</span></td><td><span class="x"><span class="en"><code>voice_level</code> changing an artifact's tone</span><span class="vi"><code>voice_level</code> đổi giọng artifact</span></span></td><td>DEC-65</td></tr>
         <tr><td><code id="gl-persona">persona</code></td><td><span class="en"><code>persona</code> — the surface FORM of terminal prose (<code>none</code> + 13 catalog ids, work / fun groups). Sets form; <code>voice_level</code> sets harshness inside it.</span><span class="vi"><code>persona</code> — DẠNG bề mặt của prose terminal (<code>none</code> + 13 id trong catalog, nhóm work / fun). Đặt dạng; <code>voice_level</code> đặt độ gắt bên trong.</span></td><td><span class="x"><span class="en">a persona changing content / correctness</span><span class="vi">persona đổi nội dung / tính đúng</span></span></td><td>DEC-66</td></tr>
-        <tr><td><code id="gl-coding-level">coding level</code></td><td><span class="en"><code>coding_level</code> 0–5 (default 5) — explanation depth / format of terminal answers; changes depth only, never which files are touched.</span><span class="vi"><code>coding_level</code> 0–5 (mặc định 5) — độ sâu / dạng giải thích của câu trả lời terminal; chỉ đổi độ sâu, không đổi file bị đụng.</span></td><td>—</td><td>DEC-65</td></tr>
+        <tr><td><code id="gl-coding-level">explanation depth</code></td><td><span class="en"><code>terminal_voice_level</code> 0–5 (default 5) — explanation depth / format of terminal answers, and interview/turn verbosity; changes depth only, never which files are touched.</span><span class="vi"><code>terminal_voice_level</code> 0–5 (mặc định 5) — độ sâu / dạng giải thích của câu trả lời terminal, và độ dài hội thoại/lượt; chỉ đổi độ sâu, không đổi file bị đụng.</span></td><td>—</td><td>DEC-65</td></tr>
         <tr><td><code id="gl-interview-rigor">interview rigor</code></td><td><span class="en"><code>interview_rigor</code> (light / standard / deep) — depth of challenge / gap-probing in <code>hs:plan</code> / <code>hs:discover</code> / <code>hs:brainstorm</code>; SEPARATE from verbosity.</span><span class="vi"><code>interview_rigor</code> (light / standard / deep) — độ thách thức / dò khe-hở trong <code>hs:plan</code> / <code>hs:discover</code> / <code>hs:brainstorm</code>; TÁCH BIỆT với độ dài.</span></td><td><span class="x"><span class="en">conflating it with length</span><span class="vi">trộn nó với độ dài</span></span></td><td>DEC-65</td></tr>
       </tbody>
     </table>
@@ -3365,7 +3463,7 @@ exit: 0 (0 = winner)
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--rel)"><a class="pv" href="#finder"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Command finder</span><span class="vi">Chọn skill</span></span></a><a class="nx" href="#harness"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">The rig</span><span class="vi">Bộ máy</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--rel)"><a class="pv" href="#finder"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Command finder</span><span class="vi">Chọn skill</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#harness"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">The rig</span><span class="vi">Bộ máy</span></span></a></div></div>
 </div>
 <div class="route" data-route="harness">
 <!-- ===================== THE RIG (gate · coordination · telemetry) ===================== -->
@@ -3378,7 +3476,7 @@ exit: 0 (0 = winner)
     </div>
     <div class="divider" style="--ac:var(--tel)"></div>
 
-    <p class="lead" style="margin-bottom:18px"><span class="en">Behind the 107 skills sits the enforcement layer: forty-eight hooks in three tiers, a multi-agent coordination layer (claims · task-store · plan-approval · write-guard), and read-only telemetry that ends every report with what it <b>cannot</b> measure. It reports whether the <i>machinery runs</i> — never whether the <i>product wins the market</i>.</span><span class="vi">Sau 107 skill là lớp cưỡng chế: bốn mươi tám hook ba hạng, một lớp phối hợp đa-agent (claims · task-store · plan-approval · write-guard), và telemetry chỉ-đọc kết mỗi báo cáo bằng cái nó <b>không</b> đo được. Nó báo <i>máy móc có chạy không</i> — không bao giờ báo <i>sản phẩm có thắng thị trường không</i>.</span></p>
+    <p class="lead" style="margin-bottom:18px"><span class="en">Behind the 106 skills sits the enforcement layer: forty-eight hooks in three tiers, a multi-agent coordination layer (claims · task-store · plan-approval · write-guard), and read-only telemetry that ends every report with what it <b>cannot</b> measure. It reports whether the <i>machinery runs</i> — never whether the <i>product wins the market</i>.</span><span class="vi">Sau 106 skill là lớp cưỡng chế: bốn mươi tám hook ba hạng, một lớp phối hợp đa-agent (claims · task-store · plan-approval · write-guard), và telemetry chỉ-đọc kết mỗi báo cáo bằng cái nó <b>không</b> đo được. Nó báo <i>máy móc có chạy không</i> — không bao giờ báo <i>sản phẩm có thắng thị trường không</i>.</span></p>
 
     <!-- when to use -->
     <h2 class="sectitle" id="rig-limits"><span class="en">What it can and can't tell you</span><span class="vi">Nó nói được gì và không nói được gì</span></h2>
@@ -3585,7 +3683,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--tel)"><a class="pv" href="#glossary"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Glossary</span><span class="vi">Thuật ngữ</span></span></a><a class="nx" href="#agents"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Agents</span><span class="vi">Agent</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--tel)"><a class="pv" href="#glossary"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Glossary</span><span class="vi">Thuật ngữ</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#agents"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Agents</span><span class="vi">Agent</span></span></a></div></div>
 </div>
 <div class="route" data-route="agents">
 <!-- ===================== AGENTS ===================== -->
@@ -3675,7 +3773,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--tel)"><a class="pv" href="#harness"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">The rig</span><span class="vi">Bộ máy</span></span></a><a class="nx" href="#standards"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Standards & DoD</span><span class="vi">Standards & DoD</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--tel)"><a class="pv" href="#harness"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">The rig</span><span class="vi">Bộ máy</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#standards"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Standards & DoD</span><span class="vi">Standards & DoD</span></span></a></div></div>
 </div>
 <div class="route" data-route="standards">
 <!-- ===================== STANDARDS / REVIEW RULES / DoD ===================== -->
@@ -3720,7 +3818,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--crit)"><a class="pv" href="#agents"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Agents</span><span class="vi">Agent</span></span></a><a class="nx" href="#telemetry"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Telemetry</span><span class="vi">Đo lường</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--crit)"><a class="pv" href="#agents"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Agents</span><span class="vi">Agent</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#telemetry"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Telemetry</span><span class="vi">Đo lường</span></span></a></div></div>
 </div>
 <div class="route" data-route="telemetry">
 <!-- ===================== TELEMETRY ===================== -->
@@ -3764,7 +3862,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--tel)"><a class="pv" href="#standards"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Standards & DoD</span><span class="vi">Standards & DoD</span></span></a><a class="nx" href="#memory"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Memory</span><span class="vi">Bộ nhớ</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--tel)"><a class="pv" href="#standards"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Standards & DoD</span><span class="vi">Standards & DoD</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#memory"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Memory</span><span class="vi">Bộ nhớ</span></span></a></div></div>
 </div>
 <div class="route" data-route="memory">
 <!-- ===================== MEMORY / KNOWLEDGE PERSISTENCE ===================== -->
@@ -3807,7 +3905,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--gold)"><a class="pv" href="#telemetry"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Telemetry</span><span class="vi">Đo lường</span></span></a><a class="nx" href="#vision"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Vision</span><span class="vi">Tầm nhìn</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--gold)"><a class="pv" href="#telemetry"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Telemetry</span><span class="vi">Đo lường</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#vision"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Vision</span><span class="vi">Tầm nhìn</span></span></a></div></div>
 </div>
 <div class="route" data-route="vision">
 <!-- ===================== VISION ===================== -->
@@ -4007,7 +4105,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--tel)"><a class="pv" href="#memory"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Memory</span><span class="vi">Bộ nhớ</span></span></a><a class="nx" href="#ref-skills"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All skills</span><span class="vi">Mọi skill</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--tel)"><a class="pv" href="#memory"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Memory</span><span class="vi">Bộ nhớ</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#ref-skills"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All skills</span><span class="vi">Mọi skill</span></span></a></div></div>
 </div>
 <div class="route" data-route="ref-skills">
 <!-- GENERATED by gen_reference.py — do not hand-edit -->
@@ -4218,7 +4316,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--rel)"><a class="pv" href="#vision"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Vision</span><span class="vi">Tầm nhìn</span></span></a><a class="nx" href="#ref-agents"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All agents</span><span class="vi">Mọi agent</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--rel)"><a class="pv" href="#vision"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">Vision</span><span class="vi">Tầm nhìn</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#ref-agents"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All agents</span><span class="vi">Mọi agent</span></span></a></div></div>
 </div>
 <div class="route" data-route="ref-agents">
 <!-- GENERATED by gen_reference.py — do not hand-edit -->
@@ -4255,7 +4353,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--tel)"><a class="pv" href="#ref-skills"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All skills</span><span class="vi">Mọi skill</span></span></a><a class="nx" href="#ref-hooks"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All hooks</span><span class="vi">Mọi hook</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--tel)"><a class="pv" href="#ref-skills"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All skills</span><span class="vi">Mọi skill</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#ref-hooks"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">All hooks</span><span class="vi">Mọi hook</span></span></a></div></div>
 </div>
 <div class="route" data-route="ref-hooks">
 <!-- GENERATED by gen_reference.py — do not hand-edit -->
@@ -4334,7 +4432,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--tel)"><a class="pv" href="#ref-agents"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All agents</span><span class="vi">Mọi agent</span></span></a><a class="nx" href="#ref-rules"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Rule layer</span><span class="vi">Lớp luật</span></span></a></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--tel)"><a class="pv" href="#ref-agents"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All agents</span><span class="vi">Mọi agent</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><a class="nx" href="#ref-rules"><span class="k"><span class="en">Next</span><span class="vi">Sau</span> →</span><span class="v"><span class="en">Rule layer</span><span class="vi">Lớp luật</span></span></a></div></div>
 </div>
 <div class="route" data-route="ref-rules">
 <!-- GENERATED by gen_reference.py — do not hand-edit -->
@@ -4368,7 +4466,7 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
   </div>
 </section>
 
-<div class="wrap"><div class="skill-nav" style="--ac:var(--spec)"><a class="pv" href="#ref-hooks"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All hooks</span><span class="vi">Mọi hook</span></span></a><span class="nx" style="flex:1"></span></div></div>
+<div class="wrap"><div class="page-nav" style="--ac:var(--spec)"><a class="pv" href="#ref-hooks"><span class="k">← <span class="en">Prev</span><span class="vi">Trước</span></span><span class="v"><span class="en">All hooks</span><span class="vi">Mọi hook</span></span></a><a class="hb" href="#hub"><span class="k"><span class="en">Overview</span><span class="vi">Tổng quan</span></span><span class="v">▦</span></a><span class="nx" style="flex:1"></span></div></div>
 </div>
 </main>
 <nav class="toc" data-toc aria-label="On this page"></nav>
@@ -4382,17 +4480,17 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
     </div>
     <div>
       <h4><span class="en">Skills</span><span class="vi">Skill</span></h4>
-      <a href="../harness/plugins/hs/skills/plan/SKILL.md">hs:plan</a>
-      <a href="../harness/plugins/hs/skills/cook/SKILL.md">hs:cook</a>
-      <a href="../harness/plugins/hs/skills/test/SKILL.md">hs:test</a>
-      <a href="../harness/rules/harness-contract.md">harness-contract</a>
+      <a href="../../harness/plugins/hs/skills/plan/SKILL.md">hs:plan</a>
+      <a href="../../harness/plugins/hs/skills/cook/SKILL.md">hs:cook</a>
+      <a href="../../harness/plugins/hs/skills/test/SKILL.md">hs:test</a>
+      <a href="../../harness/rules/harness-contract.md">harness-contract</a>
     </div>
     <div>
       <h4><span class="en">Docs</span><span class="vi">Tài liệu</span></h4>
-      <a href="../README.md">README</a>
-      <a href="../docs/codebase-summary.md">codebase-summary</a>
-      <a href="../docs/system-architecture.md">system-architecture</a>
-      <a href="../docs/decisions.md">decisions (DEC)</a>
+      <a href="../../README.md">README</a>
+      <a href="../../docs/codebase-summary.md">codebase-summary</a>
+      <a href="../../docs/system-architecture.md">system-architecture</a>
+      <a href="../../docs/decisions.md">decisions (DEC)</a>
     </div>
   </div>
   <p class="faint" style="text-align:center;max-width:var(--maxw);margin:34px auto 0;font-size:.78rem"><span class="en">This page is a standalone showcase — no build step to view, no external requests, no chart library. Every terminal block below is real captured stdout. Open it in any browser.</span><span class="vi">Trang này là một showcase tự chứa — không cần build để xem, không gọi mạng, không thư viện vẽ. Mọi khối terminal bên dưới là stdout thật được ghi lại. Mở bằng bất kỳ trình duyệt nào.</span></p>
@@ -4410,14 +4508,21 @@ _sessions analyzed: 1 · sufficient: False · gated: True_
 <script>
 /* ---------------- language toggle ---------------- */
 function setLang(l){
+  l = (l === 'en') ? 'en' : 'vi';
+  /* engine + the head early-init script keep the lang class on <html>; mirror onto
+     <body> so legacy body-scoped rules also resolve, and flip the toggle buttons. */
+  document.documentElement.classList.toggle('lang-en', l==='en');
+  document.documentElement.classList.toggle('lang-vi', l==='vi');
   document.body.classList.toggle('lang-vi', l==='vi');
   document.body.classList.toggle('lang-en', l==='en');
-  document.getElementById('btn-en').classList.toggle('active', l==='en');
-  document.getElementById('btn-vi').classList.toggle('active', l==='vi');
+  var be=document.getElementById('btn-en'), bv=document.getElementById('btn-vi');
+  if(be) be.classList.toggle('active', l==='en');
+  if(bv) bv.classList.toggle('active', l==='vi');
   document.documentElement.lang = l;
   try{ localStorage.setItem('hs-lang', l); }catch(e){}
 }
-(function(){ try{ var s=localStorage.getItem('hs-lang'); if(s) setLang(s);}catch(e){} })();
+(function(){ try{ var s=localStorage.getItem('hs-lang'); if(s) setLang(s);
+  else setLang(document.documentElement.classList.contains('lang-en')?'en':'vi'); }catch(e){} })();
 
 /* honor prefers-reduced-motion across canvas + counters */
 var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -4434,7 +4539,7 @@ var AUTONOMY = {
 function renderDial(wrap){
   var v = +(wrap.dataset.autonomy || 0);
   var L = AUTONOMY[v];
-  var lang = document.body.classList.contains('lang-vi') ? 'vi' : 'en';
+  var lang = document.documentElement.classList.contains('lang-en') ? 'en' : 'vi';
   var d = L[lang];
   var bar = wrap.querySelector('.fstep-bar');
   if(bar) bar.querySelectorAll('button').forEach(function(b,i){ b.classList.toggle('on', i===v); });
@@ -4705,6 +4810,78 @@ function initHero3D(){
       if(cmd) cmd.textContent=f;
     });
   });
+})();
+
+/* ---------------- site search — command palette (⌘/Ctrl-K, "/", header button) ----------------
+   Searches the sidebar page links (hrefs already correct for the current page), then
+   navigates. Self-contained: works in the multipage build and the portable single file.
+   Ported + trimmed from the aurora-3d showcase 09-search.js (no modules/glossary index). */
+(function(){
+  var pal, input, list, items = [], active = -1;
+  function lang(){ return document.documentElement.classList.contains('lang-en') ? 'en' : 'vi'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function gather(){
+    var en = lang() === 'en', out = [], seen = {};
+    document.querySelectorAll('.side-link').forEach(function(a){
+      /* links carry both <span class="en"> and <span class="vi">; textContent would
+         glue them together — read only the active-language span. */
+      var span = a.querySelector(en ? '.en' : '.vi');
+      var label = ((span ? span.textContent : a.textContent) || '').trim();
+      var href = a.getAttribute('href');
+      if(label && !seen[label]){ seen[label] = 1;
+        out.push({ label:label, sub:(en?'Page':'Trang'), href:href }); }
+    });
+    return out;
+  }
+  function render(q){
+    q = (q || '').trim().toLowerCase();
+    var all = gather();
+    var res = q ? all.filter(function(x){ return x.label.toLowerCase().indexOf(q) >= 0; }) : all.slice(0, 8);
+    items = res.slice(0, 40); active = items.length ? 0 : -1;
+    if(!items.length){ list.innerHTML = '<div class="pal-empty">' + (lang()==='en'?'No match':'Không khớp') + '</div>'; return; }
+    list.innerHTML = items.map(function(x, i){
+      return '<button class="pal-item' + (i===0?' on':'') + '" data-i="' + i + '" type="button">'
+        + '<span class="pal-t">' + esc(x.label) + '</span><span class="pal-k">' + esc(x.sub) + '</span></button>';
+    }).join('');
+  }
+  function go(x){ closePal(); if(x && x.href){ window.location.href = x.href; } }
+  function move(d){
+    var btns = list.querySelectorAll('.pal-item'); if(!btns.length) return;
+    if(btns[active]) btns[active].classList.remove('on');
+    active = (active + d + btns.length) % btns.length;
+    btns[active].classList.add('on'); btns[active].scrollIntoView({ block:'nearest' });
+  }
+  function openPal(){ if(!pal) buildPal(); pal.classList.add('open'); document.body.classList.add('pal-open'); input.value=''; render(''); input.focus(); }
+  function closePal(){ if(pal){ pal.classList.remove('open'); document.body.classList.remove('pal-open'); } }
+  function buildPal(){
+    var en = lang() === 'en';
+    pal = document.createElement('div'); pal.className = 'palette'; pal.setAttribute('role','dialog'); pal.setAttribute('aria-label','Search');
+    pal.innerHTML = '<div class="pal-box">'
+      + '<input class="pal-input" type="search" autocomplete="off" placeholder="'
+      + (en?'Search pages…':'Tìm trang…') + '" aria-label="Search">'
+      + '<div class="pal-list"></div>'
+      + '<div class="pal-foot"><span>↑↓</span> ' + (en?'move':'di chuyển') + ' · <span>↵</span> ' + (en?'open':'mở') + ' · <span>esc</span> ' + (en?'close':'đóng') + '</div>'
+      + '</div>';
+    document.body.appendChild(pal);
+    input = pal.querySelector('.pal-input'); list = pal.querySelector('.pal-list');
+    pal.addEventListener('click', function(e){ if(e.target === pal) closePal(); });
+    input.addEventListener('input', function(){ render(input.value); });
+    list.addEventListener('click', function(e){ var b = e.target.closest('.pal-item'); if(b) go(items[+b.dataset.i]); });
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'ArrowDown'){ e.preventDefault(); move(1); }
+      else if(e.key === 'ArrowUp'){ e.preventDefault(); move(-1); }
+      else if(e.key === 'Enter'){ e.preventDefault(); if(active >= 0) go(items[active]); }
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')){ e.preventDefault(); openPal(); }
+    else if(e.key === 'Escape'){ closePal(); }
+    else if(e.key === '/' && !/^(input|textarea|select)$/i.test((e.target && e.target.tagName) || '')){ e.preventDefault(); openPal(); }
+  });
+  document.addEventListener('click', function(e){ if(e.target.closest('[data-search-open]')){ e.preventDefault(); openPal(); } });
+  window.__openPalette = openPal;
 })();
 
 </script>

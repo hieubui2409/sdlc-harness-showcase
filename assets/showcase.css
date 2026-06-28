@@ -33,8 +33,8 @@ body{
   line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased;
 }
 /* bilingual toggle: hide the other language */
-body.lang-en .vi{display:none !important}
-body.lang-vi .en{display:none !important}
+.lang-en .vi{display:none !important}
+.lang-vi .en{display:none !important}
 
 a{color:var(--spec);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -549,3 +549,72 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
   #net{display:none}            /* decorative constellation — drop entirely */
   .bar .bf{transition:none !important}
 }
+
+/* ===================== ENGINE CHROME (ported for ssg_engine) =====================
+   The shared engine emits its own header (.app-header > .nav-in with ⌘K search +
+   skip-link), sidebar, crumb, and .page-nav (the prev/overview/next strip). Our
+   legacy chrome targeted .app-header-in + .skill-nav; these rules restyle the
+   engine's markup to our existing dark look. Ported from the aurora-3d showcase
+   assets (vsf-aio-platform-wiki), recolored to our accent vars. */
+
+/* skip-link (a11y: jump to #main-content) */
+.skip-link{position:fixed;left:10px;top:-56px;z-index:200;background:var(--spec);color:#04122a;
+  font-weight:800;font-size:.85rem;padding:9px 15px;border-radius:9px;text-decoration:none;
+  transition:top .16s var(--ease)}
+.skip-link .vi,.skip-link .en{color:inherit}
+.skip-link:focus{top:10px;outline:2px solid #fff;outline-offset:2px}
+
+/* engine header uses .app-header > .nav-in (not .app-header-in). Match the sticky
+   header geometry to our legacy bar and let the search button push the toggle right. */
+.app-header .nav-in{max-width:1280px;gap:14px;padding:12px 24px}
+.app-header .nav-search{margin-left:auto}
+.app-header .langtoggle{flex:none}
+
+/* header search trigger (⌘K) */
+.nav-search{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--stroke-2);
+  border-radius:999px;background:var(--panel);color:var(--txt-faint);cursor:pointer;font-size:.82rem;
+  font-family:inherit;transition:.2s var(--ease)}
+.nav-search:hover{border-color:var(--spec);color:var(--txt)}
+.nav-search svg{width:15px;height:15px;flex:none}
+.nav-search .ns-lab{font-weight:600}
+.nav-search .ns-k{font-size:.72rem;border:1px solid var(--stroke);border-radius:5px;padding:1px 5px;color:var(--txt-faint)}
+@media(max-width:680px){.nav-search .ns-lab,.nav-search .ns-k{display:none}}
+
+/* command palette (site-wide search) */
+.palette{display:none;position:fixed;inset:0;z-index:200;background:rgba(3,6,14,.66);
+  backdrop-filter:blur(3px);padding:14vh 16px 16px;justify-content:center;align-items:flex-start}
+.palette.open{display:flex}
+.pal-box{width:min(640px,100%);background:var(--bg-2);border:1px solid var(--stroke-2);
+  border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column;max-height:70vh}
+.pal-input{width:100%;border:0;border-bottom:1px solid var(--stroke);background:transparent;color:var(--txt);
+  font-size:1.05rem;padding:18px 20px;outline:none;font-family:inherit}
+.pal-list{overflow-y:auto;padding:8px}
+.pal-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;
+  border:0;background:transparent;color:var(--txt);padding:10px 14px;border-radius:10px;cursor:pointer;
+  font-size:.92rem;font-family:inherit}
+.pal-item:hover,.pal-item.on{background:color-mix(in srgb,var(--spec) 14%,transparent)}
+.pal-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pal-k{flex:0 0 auto;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--txt-faint);
+  border:1px solid var(--stroke);border-radius:6px;padding:2px 7px}
+.pal-empty{padding:22px;text-align:center;color:var(--txt-faint)}
+.pal-foot{border-top:1px solid var(--stroke);padding:9px 16px;font-size:.74rem;color:var(--txt-faint)}
+.pal-foot span{border:1px solid var(--stroke);border-radius:5px;padding:0 5px}
+body.pal-open{overflow:hidden}
+
+/* page-nav (engine name for the legacy .skill-nav prev/overview/next strip).
+   Same look as .skill-nav above so guide footers stay identical. */
+.page-nav{display:flex;align-items:stretch;justify-content:space-between;gap:14px;
+  margin-top:40px;margin-bottom:64px;padding-top:26px;border-top:1px solid var(--stroke)}
+.page-nav a,.page-nav span.pv,.page-nav span.nx{flex:1;display:flex;flex-direction:column;gap:3px;
+  border:1px solid var(--stroke);background:var(--panel);border-radius:13px;padding:14px 16px;
+  transition:.25s var(--ease);color:var(--txt-dim)}
+.page-nav span.pv,.page-nav span.nx{border:0;background:transparent}
+.page-nav a:hover{border-color:var(--ac,var(--spec));color:var(--txt);text-decoration:none;transform:translateY(-3px)}
+.page-nav a.nx{text-align:right;align-items:flex-end}
+.page-nav a.hb{flex:0 0 auto;align-items:center;justify-content:center;text-align:center;min-width:130px;font-weight:700}
+.page-nav .k{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.page-nav .v{font-family:monospace;font-weight:700;color:var(--txt)}
+@media(max-width:680px){.page-nav{flex-direction:column}.page-nav a,.page-nav span.pv,.page-nav span.nx{width:100%}.page-nav a.nx{text-align:left;align-items:flex-start}}
+
+/* engine header reveals the side-toggle on guide pages at mobile width */
+@media(max-width:900px){body.view-guide .app-header .side-toggle{display:inline-flex}}

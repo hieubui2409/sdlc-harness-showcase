@@ -1,13 +1,20 @@
 /* ---------------- language toggle ---------------- */
 function setLang(l){
+  l = (l === 'en') ? 'en' : 'vi';
+  /* engine + the head early-init script keep the lang class on <html>; mirror onto
+     <body> so legacy body-scoped rules also resolve, and flip the toggle buttons. */
+  document.documentElement.classList.toggle('lang-en', l==='en');
+  document.documentElement.classList.toggle('lang-vi', l==='vi');
   document.body.classList.toggle('lang-vi', l==='vi');
   document.body.classList.toggle('lang-en', l==='en');
-  document.getElementById('btn-en').classList.toggle('active', l==='en');
-  document.getElementById('btn-vi').classList.toggle('active', l==='vi');
+  var be=document.getElementById('btn-en'), bv=document.getElementById('btn-vi');
+  if(be) be.classList.toggle('active', l==='en');
+  if(bv) bv.classList.toggle('active', l==='vi');
   document.documentElement.lang = l;
   try{ localStorage.setItem('hs-lang', l); }catch(e){}
 }
-(function(){ try{ var s=localStorage.getItem('hs-lang'); if(s) setLang(s);}catch(e){} })();
+(function(){ try{ var s=localStorage.getItem('hs-lang'); if(s) setLang(s);
+  else setLang(document.documentElement.classList.contains('lang-en')?'en':'vi'); }catch(e){} })();
 
 /* honor prefers-reduced-motion across canvas + counters */
 var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -24,7 +31,7 @@ var AUTONOMY = {
 function renderDial(wrap){
   var v = +(wrap.dataset.autonomy || 0);
   var L = AUTONOMY[v];
-  var lang = document.body.classList.contains('lang-vi') ? 'vi' : 'en';
+  var lang = document.documentElement.classList.contains('lang-en') ? 'en' : 'vi';
   var d = L[lang];
   var bar = wrap.querySelector('.fstep-bar');
   if(bar) bar.querySelectorAll('button').forEach(function(b,i){ b.classList.toggle('on', i===v); });
@@ -295,4 +302,76 @@ function initHero3D(){
       if(cmd) cmd.textContent=f;
     });
   });
+})();
+
+/* ---------------- site search — command palette (⌘/Ctrl-K, "/", header button) ----------------
+   Searches the sidebar page links (hrefs already correct for the current page), then
+   navigates. Self-contained: works in the multipage build and the portable single file.
+   Ported + trimmed from the aurora-3d showcase 09-search.js (no modules/glossary index). */
+(function(){
+  var pal, input, list, items = [], active = -1;
+  function lang(){ return document.documentElement.classList.contains('lang-en') ? 'en' : 'vi'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function gather(){
+    var en = lang() === 'en', out = [], seen = {};
+    document.querySelectorAll('.side-link').forEach(function(a){
+      /* links carry both <span class="en"> and <span class="vi">; textContent would
+         glue them together — read only the active-language span. */
+      var span = a.querySelector(en ? '.en' : '.vi');
+      var label = ((span ? span.textContent : a.textContent) || '').trim();
+      var href = a.getAttribute('href');
+      if(label && !seen[label]){ seen[label] = 1;
+        out.push({ label:label, sub:(en?'Page':'Trang'), href:href }); }
+    });
+    return out;
+  }
+  function render(q){
+    q = (q || '').trim().toLowerCase();
+    var all = gather();
+    var res = q ? all.filter(function(x){ return x.label.toLowerCase().indexOf(q) >= 0; }) : all.slice(0, 8);
+    items = res.slice(0, 40); active = items.length ? 0 : -1;
+    if(!items.length){ list.innerHTML = '<div class="pal-empty">' + (lang()==='en'?'No match':'Không khớp') + '</div>'; return; }
+    list.innerHTML = items.map(function(x, i){
+      return '<button class="pal-item' + (i===0?' on':'') + '" data-i="' + i + '" type="button">'
+        + '<span class="pal-t">' + esc(x.label) + '</span><span class="pal-k">' + esc(x.sub) + '</span></button>';
+    }).join('');
+  }
+  function go(x){ closePal(); if(x && x.href){ window.location.href = x.href; } }
+  function move(d){
+    var btns = list.querySelectorAll('.pal-item'); if(!btns.length) return;
+    if(btns[active]) btns[active].classList.remove('on');
+    active = (active + d + btns.length) % btns.length;
+    btns[active].classList.add('on'); btns[active].scrollIntoView({ block:'nearest' });
+  }
+  function openPal(){ if(!pal) buildPal(); pal.classList.add('open'); document.body.classList.add('pal-open'); input.value=''; render(''); input.focus(); }
+  function closePal(){ if(pal){ pal.classList.remove('open'); document.body.classList.remove('pal-open'); } }
+  function buildPal(){
+    var en = lang() === 'en';
+    pal = document.createElement('div'); pal.className = 'palette'; pal.setAttribute('role','dialog'); pal.setAttribute('aria-label','Search');
+    pal.innerHTML = '<div class="pal-box">'
+      + '<input class="pal-input" type="search" autocomplete="off" placeholder="'
+      + (en?'Search pages…':'Tìm trang…') + '" aria-label="Search">'
+      + '<div class="pal-list"></div>'
+      + '<div class="pal-foot"><span>↑↓</span> ' + (en?'move':'di chuyển') + ' · <span>↵</span> ' + (en?'open':'mở') + ' · <span>esc</span> ' + (en?'close':'đóng') + '</div>'
+      + '</div>';
+    document.body.appendChild(pal);
+    input = pal.querySelector('.pal-input'); list = pal.querySelector('.pal-list');
+    pal.addEventListener('click', function(e){ if(e.target === pal) closePal(); });
+    input.addEventListener('input', function(){ render(input.value); });
+    list.addEventListener('click', function(e){ var b = e.target.closest('.pal-item'); if(b) go(items[+b.dataset.i]); });
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'ArrowDown'){ e.preventDefault(); move(1); }
+      else if(e.key === 'ArrowUp'){ e.preventDefault(); move(-1); }
+      else if(e.key === 'Enter'){ e.preventDefault(); if(active >= 0) go(items[active]); }
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')){ e.preventDefault(); openPal(); }
+    else if(e.key === 'Escape'){ closePal(); }
+    else if(e.key === '/' && !/^(input|textarea|select)$/i.test((e.target && e.target.tagName) || '')){ e.preventDefault(); openPal(); }
+  });
+  document.addEventListener('click', function(e){ if(e.target.closest('[data-search-open]')){ e.preventDefault(); openPal(); } });
+  window.__openPalette = openPal;
 })();
